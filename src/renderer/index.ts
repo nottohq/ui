@@ -20,6 +20,7 @@ export {
 // on top of the built-in Layer 1 (UI safety).
 export {
   nottoNodeSchema,
+  pagePropsSchema,
   stackPropsSchema,
   boxPropsSchema,
   textPropsSchema,
