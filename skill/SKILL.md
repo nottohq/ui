@@ -184,3 +184,46 @@ Or use a preset:
 ## Semantic HTML
 
 Primitives render sensible defaults (`Text variant="display"` → `<h1>`, `variant="title"` → `<h2>`, `variant="body"` → `<p>`). `CodeBlock` renders `<pre><code>`. Override with `as` when the layout requires a specific tag — never render raw HTML directly.
+
+## Runtime rendering (optional)
+
+If an agent, a form editor, or a database is producing UI at *runtime* (not compiled TSX at build time), import from the renderer subpath:
+
+```tsx
+import { NottoRenderer } from '@nottohq/ui/renderer'
+```
+
+The renderer takes JSON matching this shape:
+
+```json
+{
+  "type": "Stack",
+  "props": { "gap": 4, "padding": 6 },
+  "children": [
+    { "type": "Text", "props": { "variant": "title" }, "children": "Hello" },
+    {
+      "type": "Button",
+      "props": { "tone": "primary", "action": "save" },
+      "children": "Save"
+    }
+  ]
+}
+```
+
+It validates every node against the primitive schemas (strict — unknown props rejected), enforces safe `href` schemes on `Link`, caps nesting depth, and resolves `action` / `name` strings through host-registered registries:
+
+```tsx
+import { Save, X } from 'lucide-react'
+
+<NottoRenderer
+  schema={agentEmittedJson}
+  actions={{ save: handleSave, cancel: handleCancel }}
+  icons={{ save: Save, cancel: X }}
+  onError={(err) => console.error(err.kind, err.path, err.message)}
+  fallback={<p>Unable to render.</p>}
+/>
+```
+
+Unknown types, unknown props, unsafe hrefs, unknown actions, and too-deep nesting all call `onError` with a typed `RendererError` and fall back to the `fallback` node — no exception reaches the React tree.
+
+This enforces **Layer 1 — UI safety**. Consuming apps should enforce **Layer 2 — domain safety** (what section types are valid, what field shapes are allowed) by validating their own schema before passing it to the renderer. See `skill/examples/runtime-rendering.tsx` for a complete example.
