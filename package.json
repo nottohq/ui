@@ -1,7 +1,7 @@
 {
   "name": "@nottohq/ui",
-  "version": "0.0.2",
-  "description": "Agent-friendly React UI primitives. Small surface, intent-level props, ships with a skill that teaches LLMs how to use it correctly.",
+  "version": "0.0.3",
+  "description": "Agent-friendly React UI primitives. Small surface, intent-level props, ships with a skill that teaches LLMs how to use it correctly. Optional runtime renderer for agent-emitted JSON.",
   "license": "MIT",
   "author": "Tanguy Merrien",
   "homepage": "https://github.com/nottohq/ui",
@@ -21,6 +21,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./renderer": {
+      "types": "./dist/renderer.d.ts",
+      "import": "./dist/renderer.js",
+      "require": "./dist/renderer.cjs"
     },
     "./styles.css": "./src/theme/styles.css",
     "./skill": "./skill/SKILL.md"
@@ -44,7 +49,8 @@
     "react-dom": ">=19"
   },
   "dependencies": {
-    "clsx": "^2.1.1"
+    "clsx": "^2.1.1",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
@@ -62,7 +68,9 @@
     "llm",
     "claude",
     "design-system",
-    "primitives"
+    "primitives",
+    "generative-ui",
+    "runtime-rendering"
   ],
   "sideEffects": [
     "*.css"
