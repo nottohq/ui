@@ -16,22 +16,22 @@ import '@nottohq/ui/styles.css'  // once in your app root
 
 ## Primitives (shipped in **bold** — expanding from real consumer needs)
 
-| Primitive     | Purpose                                                                               | Status      |
-|---------------|---------------------------------------------------------------------------------------|-------------|
-| **Stack**     | Flex container — `direction`, `gap`, `padding`, `align`, `justify`, `wrap`, `as`      | **shipped** |
-| **Box**       | Styled container — `tone`, `padding`, `border`, `radius`, `as`                        | **shipped** |
-| **Text**      | Typography — `variant`, `tone`, `weight`, `as`                                        | **shipped** |
-| **Button**    | Action — `variant`, `tone`, `size`, `loading`                                         | **shipped** |
-| **Icon**      | Wraps any SVG component — `as`, `size`, `tone`, `label`                               | **shipped** |
-| **Link**      | Styled anchor — `href`, `tone`, `underline`, `external`, `as`                         | **shipped** |
-| **Badge**     | Status indicator — `variant`, `tone`, `size`                                          | **shipped** |
-| **CodeBlock** | Preformatted code — `tone`, `language`                                                | **shipped** |
-| Page          | Root layout + theme provider                                                          | planned     |
-| Field         | All form inputs — `type`, `label`, `help`, `error`                                    | planned     |
-| Card          | Content container with header/body/footer slots                                       | planned     |
-| Table         | Data table — `columns`, `rows`, `sortable`, `paginate`                                | planned     |
-| Modal         | Overlay — `title`, `actions`, `size`                                                  | planned     |
-| Toast         | Transient notification via `useToast()`                                               | planned     |
+| Primitive     | Purpose                                                                                                      | Status      |
+|---------------|--------------------------------------------------------------------------------------------------------------|-------------|
+| **Stack**     | Flex container — `direction`, `gap`, `padding`, `align`, `justify`, `wrap`, `as`                             | **shipped** |
+| **Box**       | Styled container — `tone`, `padding`, `border`, `radius`, `as`                                               | **shipped** |
+| **Text**      | Typography — `variant`, `tone`, `weight`, `as`                                                               | **shipped** |
+| **Button**    | Action — `variant`, `tone`, `size`, `loading`                                                                | **shipped** |
+| **Icon**      | Wraps any SVG component — `as`, `size`, `tone`, `label`                                                      | **shipped** |
+| **Link**      | Styled anchor — `href`, `tone`, `underline`, `external`, `as`                                                | **shipped** |
+| **Badge**     | Status indicator — `variant`, `tone`, `size`                                                                 | **shipped** |
+| **CodeBlock** | Preformatted code — `tone`, `language`                                                                       | **shipped** |
+| **Field**     | All form inputs via one `type` prop — text/email/password/number/tel/url/search/date/time/textarea/select/checkbox/switch | **shipped** |
+| **Modal**     | Native `<dialog>` overlay — `open`, `onDismiss`, `title`, `description`, `size`                              | **shipped** |
+| **Toast**     | `<ToastProvider>` + `useToast()` hook — `tone`, `title`, `description`, `duration`, `action`                 | **shipped** |
+| Page          | Root layout + theme provider                                                                                 | planned     |
+| Card          | Content container with header/body/footer slots                                                              | planned     |
+| Table         | Data table — `columns`, `rows`, `sortable`, `paginate`                                                       | planned     |
 
 ## The prop vocabulary (memorize this)
 
@@ -50,7 +50,7 @@ import '@nottohq/ui/styles.css'  // once in your app root
 - ❌ `className="..."` — use `tone` / `variant` / `padding` / etc.
 - ❌ `style={{...}}` — use token props
 - ❌ Arbitrary pixel values (`gap="17px"`, `padding="13px"`) — always use the scale
-- ❌ Raw HTML elements (`<div>`, `<p>`, `<h1>`, `<span>`, `<pre>`) — use Stack, Box, Text, CodeBlock; pass `as` for specific semantic tags
+- ❌ Raw HTML elements (`<div>`, `<p>`, `<h1>`, `<span>`, `<pre>`, `<input>`, `<button>`, `<dialog>`) — use the primitives; pass `as` for specific semantic tags
 - ❌ Importing from anywhere other than `@nottohq/ui` — no deep imports
 
 If a design cannot be expressed with the props: the library is wrong; open an issue at https://github.com/nottohq/ui/issues. Never reach for `className`.
@@ -72,7 +72,6 @@ If a design cannot be expressed with the props: the library is wrong; open an is
 
 ```tsx
 <Stack as="main" padding={8} gap={12}>
-  {/* Stack can pad itself now — no need to wrap in Box */}
   <Text variant="display">Dashboard</Text>
   {/* ... */}
 </Stack>
@@ -143,25 +142,68 @@ import { Github } from 'lucide-react'
 </Stack>`}</CodeBlock>
 ```
 
-### Link row
+### Form (Field in action)
 
 ```tsx
-<Stack direction="row" gap={4}>
-  <Link href="/docs">Documentation</Link>
-  <Link href="https://github.com/nottohq/ui" external>GitHub</Link>
+<Stack as="form" gap={5}>
+  <Field type="email" name="email" label="Email" required autoComplete="email" />
+  <Field type="password" name="password" label="Password" required />
+  <Field type="select" name="role" label="Role" options={[
+    { value: 'owner', label: 'Owner' },
+    { value: 'staff', label: 'Staff' },
+  ]} />
+  <Field type="switch" name="notify" label="Email me about important updates" />
+  <Field
+    type="textarea"
+    name="bio"
+    label="Short bio"
+    help="Shown on your public profile."
+    rows={3}
+  />
+  <Button type="submit" tone="primary">Create account</Button>
 </Stack>
 ```
 
-### Simple form layout (primitives only — Field lands soon)
+### Modal (confirm dialog)
 
 ```tsx
-<Stack gap={6} as="form">
-  <Stack gap={2}>
-    <Text variant="label">EMAIL</Text>
-    {/* <Field type="email" /> once shipped */}
-  </Stack>
-  <Button type="submit" tone="primary">Sign in</Button>
-</Stack>
+const [open, setOpen] = useState(false)
+
+<>
+  <Button tone="danger" onClick={() => setOpen(true)}>Delete</Button>
+  <Modal
+    open={open}
+    onDismiss={() => setOpen(false)}
+    title="Delete this shop?"
+    description="This will permanently remove the shop and all of its appointments."
+    size="sm"
+  >
+    <Stack direction="row" justify="end" gap={2}>
+      <Button variant="outline" tone="neutral" onClick={() => setOpen(false)}>Cancel</Button>
+      <Button tone="danger" onClick={handleDelete}>Delete</Button>
+    </Stack>
+  </Modal>
+</>
+```
+
+### Toast (transient notification)
+
+```tsx
+// Wrap your app once at the root
+<ToastProvider>
+  {/* your app */}
+</ToastProvider>
+
+// Inside a component
+const toast = useToast()
+
+<Button tone="primary" onClick={() => toast({
+  tone: 'success',
+  title: 'Saved',
+  description: 'Your changes are live.',
+})}>
+  Save
+</Button>
 ```
 
 ## Theming
@@ -183,7 +225,7 @@ Or use a preset:
 
 ## Semantic HTML
 
-Primitives render sensible defaults (`Text variant="display"` → `<h1>`, `variant="title"` → `<h2>`, `variant="body"` → `<p>`). `CodeBlock` renders `<pre><code>`. Override with `as` when the layout requires a specific tag — never render raw HTML directly.
+Primitives render sensible defaults (`Text variant="display"` → `<h1>`, `variant="title"` → `<h2>`, `variant="body"` → `<p>`). `CodeBlock` renders `<pre><code>`. `Modal` renders a native `<dialog>`. Override with `as` on Stack/Box/Text/Link when the layout requires a specific tag — never render raw HTML directly.
 
 ## Runtime rendering (optional)
 
@@ -225,5 +267,8 @@ import { Save, X } from 'lucide-react'
 ```
 
 Unknown types, unknown props, unsafe hrefs, unknown actions, and too-deep nesting all call `onError` with a typed `RendererError` and fall back to the `fallback` node — no exception reaches the React tree.
+
+**Renderer coverage in v0.0.4:** Stack, Box, Text, Button, Icon, Link, Badge, CodeBlock.
+**Not yet in the renderer:** Field, Modal, Toast. Forms, stateful overlays, and imperative APIs don't fit JSON rendering cleanly — author these in React directly for now.
 
 This enforces **Layer 1 — UI safety**. Consuming apps should enforce **Layer 2 — domain safety** (what section types are valid, what field shapes are allowed) by validating their own schema before passing it to the renderer. See `skill/examples/runtime-rendering.tsx` for a complete example.
