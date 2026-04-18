@@ -1,6 +1,6 @@
 {
   "name": "@nottohq/ui",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Agent-friendly React UI primitives. Small surface, intent-level props, ships with a skill that teaches LLMs how to use it correctly. Optional runtime renderer for agent-emitted JSON.",
   "license": "MIT",
   "author": "Tanguy Merrien",
