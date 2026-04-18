@@ -1,7 +1,7 @@
-// @nottohq/ui — v0 primitives
-// Planned surface (13): Page, Stack, Box, Text, Icon, Button, Link, Field, Card, Table, Modal, Toast, Badge
-// Shipped: Stack, Box, Text, Button, Icon, Link, Badge (7 of 13)
-// Remaining primitives land incrementally, driven by Truvelo's real needs.
+// @nottohq/ui — primitives
+// Small surface, growing deliberately from real consumer needs.
+// Shipped (8): Stack, Box, Text, Button, Icon, Link, Badge, CodeBlock
+// Planned: Page, Field, Card, Table, Modal, Toast
 
 export { Stack, type StackProps } from './primitives/stack'
 export { Box, type BoxProps } from './primitives/box'
@@ -10,3 +10,4 @@ export { Button, type ButtonProps } from './primitives/button'
 export { Icon, type IconProps } from './primitives/icon'
 export { Link, type LinkProps } from './primitives/link'
 export { Badge, type BadgeProps } from './primitives/badge'
+export { CodeBlock, type CodeBlockProps } from './primitives/codeblock'

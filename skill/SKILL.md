@@ -14,46 +14,46 @@ import { Stack, Box, Text } from '@nottohq/ui'
 import '@nottohq/ui/styles.css'  // once in your app root
 ```
 
-## Primitives (13 planned — shipped so far in bold)
+## Primitives (shipped in **bold** — expanding from real consumer needs)
 
-| Primitive  | Purpose                                            | Status   |
-|------------|----------------------------------------------------|----------|
-| Page       | Root layout + theme provider                       | planned  |
-| **Stack**  | Flex container — `direction`, `gap`, `align`, `justify`, `wrap`, `as` | **shipped** |
-| **Box**    | Styled container — `tone`, `padding`, `border`, `radius`, `as`         | **shipped** |
-| **Text**   | Typography — `variant`, `tone`, `weight`, `as`                          | **shipped** |
-| **Button** | Action — `variant`, `tone`, `size`, `loading`                           | **shipped** |
-| **Icon**   | Wraps any SVG component — `as`, `size`, `tone`, `label`                 | **shipped** |
-| **Link**   | Styled anchor — `href`, `tone`, `underline`, `external`, `as`           | **shipped** |
-| **Badge**  | Status indicator — `variant`, `tone`, `size`                            | **shipped** |
-| Field      | All form inputs — `type`, `label`, `help`, `error`  | planned  |
-| Card       | Content container with header/body/footer slots     | planned  |
-| Table      | Data table — `columns`, `rows`, `sortable`, `paginate` | planned |
-| Modal      | Overlay — `title`, `actions`, `size`                | planned  |
-| Toast      | Transient notification via `useToast()`             | planned  |
-| Page       | Root layout + theme provider                        | planned  |
+| Primitive     | Purpose                                                                               | Status      |
+|---------------|---------------------------------------------------------------------------------------|-------------|
+| **Stack**     | Flex container — `direction`, `gap`, `padding`, `align`, `justify`, `wrap`, `as`      | **shipped** |
+| **Box**       | Styled container — `tone`, `padding`, `border`, `radius`, `as`                        | **shipped** |
+| **Text**      | Typography — `variant`, `tone`, `weight`, `as`                                        | **shipped** |
+| **Button**    | Action — `variant`, `tone`, `size`, `loading`                                         | **shipped** |
+| **Icon**      | Wraps any SVG component — `as`, `size`, `tone`, `label`                               | **shipped** |
+| **Link**      | Styled anchor — `href`, `tone`, `underline`, `external`, `as`                         | **shipped** |
+| **Badge**     | Status indicator — `variant`, `tone`, `size`                                          | **shipped** |
+| **CodeBlock** | Preformatted code — `tone`, `language`                                                | **shipped** |
+| Page          | Root layout + theme provider                                                          | planned     |
+| Field         | All form inputs — `type`, `label`, `help`, `error`                                    | planned     |
+| Card          | Content container with header/body/footer slots                                       | planned     |
+| Table         | Data table — `columns`, `rows`, `sortable`, `paginate`                                | planned     |
+| Modal         | Overlay — `title`, `actions`, `size`                                                  | planned     |
+| Toast         | Transient notification via `useToast()`                                               | planned     |
 
 ## The prop vocabulary (memorize this)
 
-| Prop | Values | Meaning |
-|------|--------|---------|
-| `tone`       | `neutral` `primary` `secondary` `muted` `success` `danger` `warning` `info` | Semantic color intent |
-| `variant`    | primitive-specific (see per-primitive table) | Type or shape |
-| `gap` / `padding` | `0` `1` `2` `3` `4` `5` `6` `8` `10` `12` | Token-scaled spacing |
-| `size`       | `xs` `sm` `md` `lg` `xl` | Size scale |
-| `align`      | `start` `center` `end` `stretch` | Flex cross-axis |
-| `justify`    | `start` `center` `end` `between` | Flex main-axis |
-| `radius`     | `none` `sm` `md` `lg` `xl` `full` | Corner radius |
+| Prop              | Values                                                                       | Meaning               |
+|-------------------|------------------------------------------------------------------------------|-----------------------|
+| `tone`            | `neutral` `primary` `secondary` `muted` `success` `danger` `warning` `info`  | Semantic color intent |
+| `variant`         | primitive-specific (see per-primitive table)                                 | Type or shape         |
+| `gap` / `padding` | `0` `1` `2` `3` `4` `5` `6` `8` `10` `12`                                    | Token-scaled spacing  |
+| `size`            | `xs` `sm` `md` `lg` `xl`                                                     | Size scale            |
+| `align`           | `start` `center` `end` `stretch`                                             | Flex cross-axis       |
+| `justify`         | `start` `center` `end` `between`                                             | Flex main-axis        |
+| `radius`          | `none` `sm` `md` `lg` `xl` `full`                                            | Corner radius         |
 
 ## Anti-patterns — never do these
 
 - ❌ `className="..."` — use `tone` / `variant` / `padding` / etc.
 - ❌ `style={{...}}` — use token props
 - ❌ Arbitrary pixel values (`gap="17px"`, `padding="13px"`) — always use the scale
-- ❌ Raw HTML elements (`<div>`, `<p>`, `<h1>`, `<span>`) — use Stack, Box, Text; pass `as` if you need a specific semantic tag
+- ❌ Raw HTML elements (`<div>`, `<p>`, `<h1>`, `<span>`, `<pre>`) — use Stack, Box, Text, CodeBlock; pass `as` for specific semantic tags
 - ❌ Importing from anywhere other than `@nottohq/ui` — no deep imports
 
-If a design cannot be expressed with the props: the library is wrong; open an issue. Never reach for `className`.
+If a design cannot be expressed with the props: the library is wrong; open an issue at https://github.com/nottohq/ui/issues. Never reach for `className`.
 
 ## Canonical examples
 
@@ -66,6 +66,16 @@ If a design cannot be expressed with the props: the library is wrong; open an is
     <Text variant="display">42</Text>
   </Stack>
 </Box>
+```
+
+### Page with padded content
+
+```tsx
+<Stack as="main" padding={8} gap={12}>
+  {/* Stack can pad itself now — no need to wrap in Box */}
+  <Text variant="display">Dashboard</Text>
+  {/* ... */}
+</Stack>
 ```
 
 ### Page header
@@ -110,6 +120,29 @@ import { Save } from 'lucide-react'
 </Stack>
 ```
 
+### Link with icon (natural inline composition)
+
+```tsx
+import { Github } from 'lucide-react'
+
+<Link href="https://github.com/nottohq/ui" external>
+  <Icon as={Github} size="sm" />
+  GitHub
+</Link>
+```
+
+### Code block
+
+```tsx
+<CodeBlock language="bash">npm install @nottohq/ui</CodeBlock>
+
+<CodeBlock language="tsx">{`import { Stack, Text } from '@nottohq/ui'
+
+<Stack gap={2}>
+  <Text variant="title">Hello</Text>
+</Stack>`}</CodeBlock>
+```
+
 ### Link row
 
 ```tsx
@@ -150,4 +183,4 @@ Or use a preset:
 
 ## Semantic HTML
 
-Primitives render sensible defaults (`Text variant="display"` → `<h1>`, `variant="title"` → `<h2>`, `variant="body"` → `<p>`). Override with `as` when the layout requires a specific tag — never render raw HTML directly.
+Primitives render sensible defaults (`Text variant="display"` → `<h1>`, `variant="title"` → `<h2>`, `variant="body"` → `<p>`). `CodeBlock` renders `<pre><code>`. Override with `as` when the layout requires a specific tag — never render raw HTML directly.
