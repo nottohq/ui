@@ -1,4 +1,4 @@
-/* @notto/ui — default theme tokens + base primitive styles */
+/* @nottohq/ui — default theme tokens + base primitive styles */
 
 :where(:root) {
   /* Colors */
@@ -92,6 +92,16 @@
 .notto-stack[data-gap="8"]  { gap: var(--notto-space-8); }
 .notto-stack[data-gap="10"] { gap: var(--notto-space-10); }
 .notto-stack[data-gap="12"] { gap: var(--notto-space-12); }
+.notto-stack[data-padding="0"]  { padding: var(--notto-space-0); }
+.notto-stack[data-padding="1"]  { padding: var(--notto-space-1); }
+.notto-stack[data-padding="2"]  { padding: var(--notto-space-2); }
+.notto-stack[data-padding="3"]  { padding: var(--notto-space-3); }
+.notto-stack[data-padding="4"]  { padding: var(--notto-space-4); }
+.notto-stack[data-padding="5"]  { padding: var(--notto-space-5); }
+.notto-stack[data-padding="6"]  { padding: var(--notto-space-6); }
+.notto-stack[data-padding="8"]  { padding: var(--notto-space-8); }
+.notto-stack[data-padding="10"] { padding: var(--notto-space-10); }
+.notto-stack[data-padding="12"] { padding: var(--notto-space-12); }
 .notto-stack[data-align="start"]   { align-items: flex-start; }
 .notto-stack[data-align="center"]  { align-items: center; }
 .notto-stack[data-align="end"]     { align-items: flex-end; }
@@ -135,6 +145,7 @@
   color: var(--notto-color-foreground);
   font-family: var(--notto-font-body);
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 .notto-text[data-variant="display"] {
   font-family: var(--notto-font-display);
@@ -241,6 +252,9 @@
 
 /* ---------- Link ---------- */
 .notto-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--notto-space-2);
   color: var(--notto-color-primary);
   text-decoration: none;
   transition: color 120ms, text-decoration-color 120ms;
@@ -294,3 +308,24 @@
 .notto-badge[data-variant="outline"][data-tone="danger"]  { color: var(--notto-color-danger);  border-color: var(--notto-color-danger); }
 .notto-badge[data-variant="outline"][data-tone="warning"] { color: var(--notto-color-warning); border-color: var(--notto-color-warning); }
 .notto-badge[data-variant="outline"][data-tone="info"]    { color: var(--notto-color-info);    border-color: var(--notto-color-info); }
+
+/* ---------- CodeBlock ---------- */
+.notto-codeblock {
+  margin: 0;
+  padding: var(--notto-space-4);
+  border-radius: var(--notto-radius-md);
+  border: var(--notto-border-width) solid var(--notto-color-border);
+  overflow-x: auto;
+  font-family: var(--notto-font-mono);
+  font-size: var(--notto-text-sm);
+  line-height: 1.6;
+  tab-size: 2;
+}
+.notto-codeblock[data-tone="muted"]   { background: var(--notto-color-muted);      color: var(--notto-color-foreground); }
+.notto-codeblock[data-tone="neutral"] { background: var(--notto-color-background); color: var(--notto-color-foreground); }
+.notto-codeblock code {
+  font-family: inherit;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
