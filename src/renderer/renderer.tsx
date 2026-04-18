@@ -54,29 +54,45 @@ const PRIMITIVES: Record<string, PrimitiveEntry> = {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 interface RenderContext {
-  actions: ActionRegistry
-  icons: IconRegistry
+  actions: Readonly<ActionRegistry>
+  icons: Readonly<IconRegistry>
   maxDepth: number
+  maxNodes: number
+  maxTextLength: number
+  nodeCount: { current: number }
 }
+
+const DEFAULT_MAX_DEPTH = 20
+const DEFAULT_MAX_NODES = 1000
+const DEFAULT_MAX_TEXT_LENGTH = 10_000
 
 /**
  * NottoRenderer — renders a validated JSON tree as @nottohq/ui primitives.
  *
- * Every node type is checked against the allowlist. Every node's props are
- * zod-validated against the primitive's strict schema (unknown props rejected).
- * Button `action` strings are resolved via the `actions` registry;
- * Icon `name` strings are resolved via the `icons` registry.
- * Invalid input calls `onError` and returns `fallback` — never throws into the
- * React tree.
+ * Layer 1 (UI safety) enforcement:
+ *   - Only allowlisted primitive types render.
+ *   - Each primitive's props are zod-validated against a strict schema.
+ *   - `Link.href` is allowlisted (no javascript:/data:/vbscript:/file:/
+ *     protocol-relative/control chars).
+ *   - DoS caps: `maxDepth` (default 20), `maxNodes` (default 1000),
+ *     `maxTextLength` per text node (default 10,000).
+ *   - Action and icon registries are snapshotted (shallow-copied + frozen)
+ *     on render, so mid-render mutation by the consumer cannot bypass
+ *     the allowlist.
  *
- * This enforces Layer 1 (UI safety). Consuming apps compose Layer 2 (domain
- * safety) on top by validating their own schema before passing it here.
+ * Invalid input calls `onError` with a typed `RendererError` and returns
+ * `fallback`. No exception reaches the React tree.
+ *
+ * Consuming apps compose Layer 2 (domain safety) on top by validating their
+ * own schema before passing it here.
  */
 export function NottoRenderer({
   schema,
   actions = {},
   icons = {},
-  maxDepth = 20,
+  maxDepth = DEFAULT_MAX_DEPTH,
+  maxNodes = DEFAULT_MAX_NODES,
+  maxTextLength = DEFAULT_MAX_TEXT_LENGTH,
   onError,
   fallback = null,
 }: NottoRendererProps): ReactNode {
@@ -93,7 +109,18 @@ export function NottoRenderer({
       return fallback
     }
 
-    return renderNode(parsed.data, { actions, icons, maxDepth }, 0, [])
+    // Snapshot + freeze the registries so the render is deterministic even if
+    // the caller mutates the original objects mid-tree.
+    const ctx: RenderContext = {
+      actions: Object.freeze({ ...actions }),
+      icons: Object.freeze({ ...icons }),
+      maxDepth,
+      maxNodes,
+      maxTextLength,
+      nodeCount: { current: 0 },
+    }
+
+    return renderNode(parsed.data, ctx, 0, [])
   } catch (err) {
     if (err instanceof RendererError) {
       onError?.(err)
@@ -109,6 +136,15 @@ function renderNode(
   depth: number,
   path: readonly string[],
 ): ReactNode {
+  ctx.nodeCount.current += 1
+  if (ctx.nodeCount.current > ctx.maxNodes) {
+    throw new RendererError(
+      `Max node count (${ctx.maxNodes}) exceeded`,
+      'max-nodes',
+      path,
+    )
+  }
+
   if (depth > ctx.maxDepth) {
     throw new RendererError(
       `Max depth (${ctx.maxDepth}) exceeded`,
@@ -178,16 +214,34 @@ function renderChildren(
   path: readonly string[],
 ): ReactNode {
   if (children == null) return null
-  if (typeof children === 'string' || typeof children === 'number') {
+  if (typeof children === 'string') {
+    checkTextLength(children, ctx, path)
     return children
   }
+  if (typeof children === 'number') return children
   if (Array.isArray(children)) {
     return children.map((child, i) => {
-      if (typeof child === 'string' || typeof child === 'number') {
+      if (typeof child === 'string') {
+        checkTextLength(child, ctx, [...path, String(i)])
         return child
       }
+      if (typeof child === 'number') return child
       return renderNode(child, ctx, depth, [...path, String(i)])
     })
   }
   return renderNode(children, ctx, depth, path)
+}
+
+function checkTextLength(
+  text: string,
+  ctx: RenderContext,
+  path: readonly string[],
+): void {
+  if (text.length > ctx.maxTextLength) {
+    throw new RendererError(
+      `Text content (${text.length} chars) exceeds maxTextLength (${ctx.maxTextLength})`,
+      'max-text-length',
+      path,
+    )
+  }
 }

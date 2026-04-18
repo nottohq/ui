@@ -26,6 +26,8 @@ export type RendererErrorKind =
   | 'unknown-type'
   | 'invalid-props'
   | 'max-depth'
+  | 'max-nodes'
+  | 'max-text-length'
   | 'unknown-action'
   | 'unknown-icon'
 
@@ -50,6 +52,10 @@ export interface NottoRendererProps {
   icons?: IconRegistry
   /** Max nesting depth. Default 20. */
   maxDepth?: number
+  /** Max total node count across the tree. Default 1000. */
+  maxNodes?: number
+  /** Max characters per text node. Default 10_000. */
+  maxTextLength?: number
   /** Called with a RendererError on any validation failure. */
   onError?: (error: RendererError) => void
   /** React node shown if validation fails. Default null. */

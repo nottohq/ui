@@ -60,13 +60,33 @@ const toneBox = z.enum([
 const toneLink = z.enum(['default', 'primary', 'secondary', 'muted'])
 
 /**
- * Allowlist of safe URL schemes. Blocks `javascript:`, `data:`, `vbscript:`,
- * `file:`, and anything else not in the list.
+ * Allowlist of safe URL schemes for `Link.href`. Rejects:
+ *   - `javascript:` / `data:` / `vbscript:` / `file:` / any other scheme
+ *   - protocol-relative URLs (`//evil.com`) — browsers would resolve these
+ *     to the current page scheme, an open-redirect vector
+ *   - hrefs containing control characters (NUL, DEL, 0x00-0x1f) — these are
+ *     used in bypass attempts (e.g. `javas\0cript:alert(1)`)
+ *   - hrefs longer than 2048 chars (reasonable browser limit; stops payload bombs)
+ *
+ * Leading/trailing whitespace is tolerated — trimmed before the regex check.
  */
-const safeHref = z.string().refine(
-  (h) => /^(https?:|mailto:|tel:|\/|#)/.test(h),
-  { message: 'href must be http(s), mailto, tel, relative, or fragment' },
-)
+const safeHref = z
+  .string()
+  .max(2048, { message: 'href too long' })
+  .refine(
+    (h) => {
+      const trimmed = h.trim()
+      // Reject control characters and DEL.
+      if (/[\x00-\x1f\x7f]/.test(trimmed)) return false
+      // Allowlist. Note the negative lookahead on the lone `/` — it blocks
+      // `//evil.com` (protocol-relative) while still allowing `/internal/path`.
+      return /^(?:https?:\/\/|mailto:|tel:|#|\/(?!\/))/.test(trimmed)
+    },
+    {
+      message:
+        'href must be http(s), mailto, tel, internal path, or fragment, and contain no control characters',
+    },
+  )
 
 export const stackPropsSchema = z.strictObject({
   direction: z.enum(['row', 'col']).optional(),
@@ -150,10 +170,17 @@ export const pagePropsSchema = z.strictObject({
   as: z.enum(['div', 'main', 'section', 'article']).optional(),
 })
 
+/**
+ * Hard cap on the length of any single text node. The renderer enforces a
+ * lower configurable cap on top of this, but this catches absurd payloads
+ * at the schema layer before memory is allocated for them.
+ */
+const TEXT_HARD_CAP = 100_000
+
 // Recursive node schema — an agent emits a tree of these.
 export const nottoNodeSchema: z.ZodType<NottoNode> = z.lazy(() =>
   z.strictObject({
-    type: z.string(),
+    type: z.string().max(64),
     props: z.record(z.string(), z.unknown()).optional(),
     children: nottoChildrenSchema.optional(),
   }),
@@ -161,9 +188,11 @@ export const nottoNodeSchema: z.ZodType<NottoNode> = z.lazy(() =>
 
 const nottoChildrenSchema: z.ZodType<NottoChildren> = z.lazy(() =>
   z.union([
-    z.string(),
+    z.string().max(TEXT_HARD_CAP),
     z.number(),
     nottoNodeSchema,
-    z.array(z.union([z.string(), z.number(), nottoNodeSchema])),
+    z.array(
+      z.union([z.string().max(TEXT_HARD_CAP), z.number(), nottoNodeSchema]),
+    ),
   ]),
 )
