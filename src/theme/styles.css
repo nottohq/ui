@@ -1,0 +1,181 @@
+/* @notto/ui — default theme tokens + base primitive styles */
+
+:where(:root) {
+  /* Colors */
+  --notto-color-background: #ffffff;
+  --notto-color-foreground: #0a0a0a;
+  --notto-color-primary: #ea580c;
+  --notto-color-primary-fg: #ffffff;
+  --notto-color-secondary: #52525b;
+  --notto-color-muted: #f4f4f5;
+  --notto-color-muted-fg: #71717a;
+  --notto-color-border: #e4e4e7;
+  --notto-color-success: #16a34a;
+  --notto-color-success-fg: #ffffff;
+  --notto-color-danger: #dc2626;
+  --notto-color-danger-fg: #ffffff;
+  --notto-color-warning: #ca8a04;
+  --notto-color-warning-fg: #ffffff;
+  --notto-color-info: #2563eb;
+  --notto-color-info-fg: #ffffff;
+
+  /* Space scale */
+  --notto-space-0: 0;
+  --notto-space-1: 0.25rem;
+  --notto-space-2: 0.5rem;
+  --notto-space-3: 0.75rem;
+  --notto-space-4: 1rem;
+  --notto-space-5: 1.25rem;
+  --notto-space-6: 1.5rem;
+  --notto-space-8: 2rem;
+  --notto-space-10: 2.5rem;
+  --notto-space-12: 3rem;
+
+  /* Typography */
+  --notto-font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --notto-font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --notto-font-display: var(--notto-font-body);
+
+  --notto-text-xs: 0.75rem;
+  --notto-text-sm: 0.875rem;
+  --notto-text-base: 1rem;
+  --notto-text-lg: 1.125rem;
+  --notto-text-xl: 1.25rem;
+  --notto-text-2xl: 1.5rem;
+  --notto-text-3xl: 1.875rem;
+  --notto-text-4xl: 2.25rem;
+
+  --notto-weight-regular: 400;
+  --notto-weight-medium: 500;
+  --notto-weight-semibold: 600;
+  --notto-weight-bold: 700;
+
+  /* Radius */
+  --notto-radius-none: 0;
+  --notto-radius-sm: 0.125rem;
+  --notto-radius-md: 0.375rem;
+  --notto-radius-lg: 0.5rem;
+  --notto-radius-xl: 0.75rem;
+  --notto-radius-full: 9999px;
+
+  --notto-border-width: 1px;
+}
+
+/* Schematic Protocol preset (Truvelo) */
+[data-notto-theme="schematic"] {
+  --notto-color-background: #f9f9f9;
+  --notto-color-foreground: #0a0a0a;
+  --notto-color-primary: #b02f00;
+  --notto-color-primary-fg: #ffffff;
+  --notto-color-secondary: #52525b;
+  --notto-radius-sm: 0;
+  --notto-radius-md: 0;
+  --notto-radius-lg: 0;
+  --notto-radius-xl: 0;
+  --notto-radius-full: 0;
+  --notto-font-display: "Space Grotesk", system-ui, sans-serif;
+  --notto-font-body: "Inter", system-ui, sans-serif;
+  --notto-font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* ---------- Stack ---------- */
+.notto-stack { display: flex; min-width: 0; }
+.notto-stack[data-direction="row"] { flex-direction: row; }
+.notto-stack[data-direction="col"] { flex-direction: column; }
+.notto-stack[data-gap="0"]  { gap: var(--notto-space-0); }
+.notto-stack[data-gap="1"]  { gap: var(--notto-space-1); }
+.notto-stack[data-gap="2"]  { gap: var(--notto-space-2); }
+.notto-stack[data-gap="3"]  { gap: var(--notto-space-3); }
+.notto-stack[data-gap="4"]  { gap: var(--notto-space-4); }
+.notto-stack[data-gap="5"]  { gap: var(--notto-space-5); }
+.notto-stack[data-gap="6"]  { gap: var(--notto-space-6); }
+.notto-stack[data-gap="8"]  { gap: var(--notto-space-8); }
+.notto-stack[data-gap="10"] { gap: var(--notto-space-10); }
+.notto-stack[data-gap="12"] { gap: var(--notto-space-12); }
+.notto-stack[data-align="start"]   { align-items: flex-start; }
+.notto-stack[data-align="center"]  { align-items: center; }
+.notto-stack[data-align="end"]     { align-items: flex-end; }
+.notto-stack[data-align="stretch"] { align-items: stretch; }
+.notto-stack[data-justify="start"]   { justify-content: flex-start; }
+.notto-stack[data-justify="center"]  { justify-content: center; }
+.notto-stack[data-justify="end"]     { justify-content: flex-end; }
+.notto-stack[data-justify="between"] { justify-content: space-between; }
+.notto-stack[data-wrap="true"] { flex-wrap: wrap; }
+
+/* ---------- Box ---------- */
+.notto-box { box-sizing: border-box; }
+.notto-box[data-tone="neutral"]   { background: var(--notto-color-background); color: var(--notto-color-foreground); }
+.notto-box[data-tone="muted"]     { background: var(--notto-color-muted);      color: var(--notto-color-foreground); }
+.notto-box[data-tone="primary"]   { background: var(--notto-color-primary);    color: var(--notto-color-primary-fg); }
+.notto-box[data-tone="secondary"] { background: var(--notto-color-secondary);  color: var(--notto-color-primary-fg); }
+.notto-box[data-tone="success"]   { background: var(--notto-color-success);    color: var(--notto-color-success-fg); }
+.notto-box[data-tone="danger"]    { background: var(--notto-color-danger);     color: var(--notto-color-danger-fg); }
+.notto-box[data-tone="warning"]   { background: var(--notto-color-warning);    color: var(--notto-color-warning-fg); }
+.notto-box[data-tone="info"]      { background: var(--notto-color-info);       color: var(--notto-color-info-fg); }
+.notto-box[data-padding="0"]  { padding: var(--notto-space-0); }
+.notto-box[data-padding="1"]  { padding: var(--notto-space-1); }
+.notto-box[data-padding="2"]  { padding: var(--notto-space-2); }
+.notto-box[data-padding="3"]  { padding: var(--notto-space-3); }
+.notto-box[data-padding="4"]  { padding: var(--notto-space-4); }
+.notto-box[data-padding="6"]  { padding: var(--notto-space-6); }
+.notto-box[data-padding="8"]  { padding: var(--notto-space-8); }
+.notto-box[data-padding="10"] { padding: var(--notto-space-10); }
+.notto-box[data-padding="12"] { padding: var(--notto-space-12); }
+.notto-box[data-border="true"]  { border: var(--notto-border-width) solid var(--notto-color-border); }
+.notto-box[data-radius="none"] { border-radius: var(--notto-radius-none); }
+.notto-box[data-radius="sm"]   { border-radius: var(--notto-radius-sm); }
+.notto-box[data-radius="md"]   { border-radius: var(--notto-radius-md); }
+.notto-box[data-radius="lg"]   { border-radius: var(--notto-radius-lg); }
+.notto-box[data-radius="xl"]   { border-radius: var(--notto-radius-xl); }
+.notto-box[data-radius="full"] { border-radius: var(--notto-radius-full); }
+
+/* ---------- Text ---------- */
+.notto-text {
+  margin: 0;
+  color: var(--notto-color-foreground);
+  font-family: var(--notto-font-body);
+  line-height: 1.5;
+}
+.notto-text[data-variant="display"] {
+  font-family: var(--notto-font-display);
+  font-size: var(--notto-text-4xl);
+  font-weight: var(--notto-weight-bold);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.notto-text[data-variant="title"] {
+  font-family: var(--notto-font-display);
+  font-size: var(--notto-text-2xl);
+  font-weight: var(--notto-weight-semibold);
+  line-height: 1.2;
+}
+.notto-text[data-variant="body"] {
+  font-size: var(--notto-text-base);
+  font-weight: var(--notto-weight-regular);
+}
+.notto-text[data-variant="label"] {
+  font-size: var(--notto-text-xs);
+  font-weight: var(--notto-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.notto-text[data-variant="data"] {
+  font-family: var(--notto-font-mono);
+  font-size: var(--notto-text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.notto-text[data-variant="caption"] {
+  font-size: var(--notto-text-sm);
+  color: var(--notto-color-muted-fg);
+}
+.notto-text[data-tone="primary"]   { color: var(--notto-color-primary); }
+.notto-text[data-tone="secondary"] { color: var(--notto-color-secondary); }
+.notto-text[data-tone="muted"]     { color: var(--notto-color-muted-fg); }
+.notto-text[data-tone="success"]   { color: var(--notto-color-success); }
+.notto-text[data-tone="danger"]    { color: var(--notto-color-danger); }
+.notto-text[data-tone="warning"]   { color: var(--notto-color-warning); }
+.notto-text[data-tone="info"]      { color: var(--notto-color-info); }
+.notto-text[data-weight="regular"]  { font-weight: var(--notto-weight-regular); }
+.notto-text[data-weight="medium"]   { font-weight: var(--notto-weight-medium); }
+.notto-text[data-weight="semibold"] { font-weight: var(--notto-weight-semibold); }
+.notto-text[data-weight="bold"]     { font-weight: var(--notto-weight-bold); }
