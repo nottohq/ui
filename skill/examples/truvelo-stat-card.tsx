@@ -1,0 +1,36 @@
+// Reference example — how to rewrite Truvelo's StatCard with @nottohq/ui primitives.
+// Original: https://github.com/truvelo/truvelo-admin/blob/main/components/stat-card.tsx
+//
+// Notes on the rewrite:
+// - No className, no style, no Tailwind strings. Intent props only.
+// - Dropped the dead `icon: React.ElementType` prop (original destructured it but never rendered it).
+// - Schematic Protocol look is inherited from the `data-notto-theme="schematic"` attribute on <html> or <body>.
+
+import { Box, Stack, Text } from '@nottohq/ui'
+
+interface StatCardProps {
+  label: string
+  value: number | undefined
+  index?: number
+}
+
+export const StatCard = ({ label, value, index = 0 }: StatCardProps) => {
+  const idx = String(index + 1).padStart(2, '0')
+  const serial = label.replace(/\s+/g, '').slice(0, 4).toUpperCase()
+  const code = label.replace(/\s+/g, '_').toUpperCase()
+
+  return (
+    <Box border padding={4}>
+      <Stack gap={3}>
+        <Stack direction="row" justify="between" align="center">
+          <Text variant="data" tone="secondary">SN-{idx}-{serial}</Text>
+          <Text variant="data" tone="secondary">•</Text>
+        </Stack>
+        <Stack gap={1}>
+          <Text variant="label" tone="secondary">[{idx}] {code}</Text>
+          <Text variant="display">{value ?? '—'}</Text>
+        </Stack>
+      </Stack>
+    </Box>
+  )
+}

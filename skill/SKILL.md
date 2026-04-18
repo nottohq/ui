@@ -19,18 +19,19 @@ import '@nottohq/ui/styles.css'  // once in your app root
 | Primitive  | Purpose                                            | Status   |
 |------------|----------------------------------------------------|----------|
 | Page       | Root layout + theme provider                       | planned  |
-| **Stack**  | Flex container — `direction`, `gap`, `align`, `justify`, `wrap` | **shipped** |
-| **Box**    | Styled container — `tone`, `padding`, `border`, `radius`        | **shipped** |
-| **Text**   | Typography — `variant`, `tone`, `weight`, `as`                  | **shipped** |
-| Icon       | Lucide wrapper — `name`, `size`, `tone`             | planned  |
-| Button     | Action — `variant`, `size`, `tone`, `loading`       | planned  |
-| Link       | Navigation — `href`, `tone`                         | planned  |
+| **Stack**  | Flex container — `direction`, `gap`, `align`, `justify`, `wrap`, `as` | **shipped** |
+| **Box**    | Styled container — `tone`, `padding`, `border`, `radius`, `as`         | **shipped** |
+| **Text**   | Typography — `variant`, `tone`, `weight`, `as`                          | **shipped** |
+| **Button** | Action — `variant`, `tone`, `size`, `loading`                           | **shipped** |
+| **Icon**   | Wraps any SVG component — `as`, `size`, `tone`, `label`                 | **shipped** |
+| **Link**   | Styled anchor — `href`, `tone`, `underline`, `external`, `as`           | **shipped** |
+| **Badge**  | Status indicator — `variant`, `tone`, `size`                            | **shipped** |
 | Field      | All form inputs — `type`, `label`, `help`, `error`  | planned  |
 | Card       | Content container with header/body/footer slots     | planned  |
 | Table      | Data table — `columns`, `rows`, `sortable`, `paginate` | planned |
 | Modal      | Overlay — `title`, `actions`, `size`                | planned  |
 | Toast      | Transient notification via `useToast()`             | planned  |
-| Badge      | Status indicator — `tone`, `variant`                | planned  |
+| Page       | Root layout + theme provider                        | planned  |
 
 ## The prop vocabulary (memorize this)
 
@@ -79,6 +80,45 @@ If a design cannot be expressed with the props: the library is wrong; open an is
 </Stack>
 ```
 
+### Button group
+
+```tsx
+<Stack direction="row" gap={2}>
+  <Button variant="solid" tone="primary">Save</Button>
+  <Button variant="outline" tone="neutral">Cancel</Button>
+</Stack>
+```
+
+### Icon with Button
+
+```tsx
+import { Save } from 'lucide-react'
+
+<Button tone="primary">
+  <Icon as={Save} size="sm" />
+  Save changes
+</Button>
+```
+
+### Status badges
+
+```tsx
+<Stack direction="row" gap={2}>
+  <Badge tone="success">ACTIVE</Badge>
+  <Badge tone="warning" variant="soft">PENDING</Badge>
+  <Badge tone="danger"  variant="outline">FAILED</Badge>
+</Stack>
+```
+
+### Link row
+
+```tsx
+<Stack direction="row" gap={4}>
+  <Link href="/docs">Documentation</Link>
+  <Link href="https://github.com/nottohq/ui" external>GitHub</Link>
+</Stack>
+```
+
 ### Simple form layout (primitives only — Field lands soon)
 
 ```tsx
@@ -87,7 +127,7 @@ If a design cannot be expressed with the props: the library is wrong; open an is
     <Text variant="label">EMAIL</Text>
     {/* <Field type="email" /> once shipped */}
   </Stack>
-  {/* submit row */}
+  <Button type="submit" tone="primary">Sign in</Button>
 </Stack>
 ```
 
