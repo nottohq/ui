@@ -143,6 +143,13 @@ export const codeBlockPropsSchema = z.strictObject({
   language: z.string().max(32).optional(),
 })
 
+export const pagePropsSchema = z.strictObject({
+  theme: z.string().max(32).optional(),
+  width: z.enum(['narrow', 'regular', 'wide', 'full']).optional(),
+  padding: spaceScale.optional(),
+  as: z.enum(['div', 'main', 'section', 'article']).optional(),
+})
+
 // Recursive node schema — an agent emits a tree of these.
 export const nottoNodeSchema: z.ZodType<NottoNode> = z.lazy(() =>
   z.strictObject({

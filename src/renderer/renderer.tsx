@@ -1,5 +1,6 @@
 import { createElement, type ComponentType, type ReactNode } from 'react'
 import type { z } from 'zod'
+import { Page } from '../primitives/page'
 import { Stack } from '../primitives/stack'
 import { Box } from '../primitives/box'
 import { Text } from '../primitives/text'
@@ -9,6 +10,7 @@ import { Link } from '../primitives/link'
 import { Badge } from '../primitives/badge'
 import { CodeBlock } from '../primitives/codeblock'
 import {
+  pagePropsSchema,
   stackPropsSchema,
   boxPropsSchema,
   textPropsSchema,
@@ -39,6 +41,7 @@ interface PrimitiveEntry {
 }
 
 const PRIMITIVES: Record<string, PrimitiveEntry> = {
+  Page: { component: Page, propsSchema: pagePropsSchema },
   Stack: { component: Stack, propsSchema: stackPropsSchema },
   Box: { component: Box, propsSchema: boxPropsSchema },
   Text: { component: Text, propsSchema: textPropsSchema },

@@ -571,3 +571,107 @@
   flex-shrink: 0;
 }
 .notto-toast__close:hover { color: var(--notto-color-foreground); }
+
+/* ---------- Page ---------- */
+.notto-page {
+  box-sizing: border-box;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--notto-color-background);
+  color: var(--notto-color-foreground);
+  font-family: var(--notto-font-body);
+}
+.notto-page[data-width="narrow"]  { max-width: 560px; }
+.notto-page[data-width="regular"] { max-width: 720px; }
+.notto-page[data-width="wide"]    { max-width: 960px; }
+.notto-page[data-width="full"]    { max-width: none; }
+.notto-page[data-padding="0"]  { padding: var(--notto-space-0); }
+.notto-page[data-padding="1"]  { padding: var(--notto-space-1); }
+.notto-page[data-padding="2"]  { padding: var(--notto-space-2); }
+.notto-page[data-padding="3"]  { padding: var(--notto-space-3); }
+.notto-page[data-padding="4"]  { padding: var(--notto-space-4); }
+.notto-page[data-padding="5"]  { padding: var(--notto-space-5); }
+.notto-page[data-padding="6"]  { padding: var(--notto-space-6); }
+.notto-page[data-padding="8"]  { padding: var(--notto-space-8); }
+.notto-page[data-padding="10"] { padding: var(--notto-space-10); }
+.notto-page[data-padding="12"] { padding: var(--notto-space-12); }
+
+/* ---------- Card ---------- */
+.notto-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.notto-card[data-tone="neutral"]   { background: var(--notto-color-background); color: var(--notto-color-foreground); }
+.notto-card[data-tone="muted"]     { background: var(--notto-color-muted);      color: var(--notto-color-foreground); }
+.notto-card[data-tone="primary"]   { background: var(--notto-color-primary);    color: var(--notto-color-primary-fg); }
+.notto-card[data-tone="secondary"] { background: var(--notto-color-secondary);  color: var(--notto-color-primary-fg); }
+.notto-card[data-tone="success"]   { background: var(--notto-color-success);    color: var(--notto-color-success-fg); }
+.notto-card[data-tone="danger"]    { background: var(--notto-color-danger);     color: var(--notto-color-danger-fg); }
+.notto-card[data-tone="warning"]   { background: var(--notto-color-warning);    color: var(--notto-color-warning-fg); }
+.notto-card[data-tone="info"]      { background: var(--notto-color-info);       color: var(--notto-color-info-fg); }
+.notto-card[data-border="true"] { border: var(--notto-border-width) solid var(--notto-color-border); }
+.notto-card[data-radius="none"] { border-radius: var(--notto-radius-none); }
+.notto-card[data-radius="sm"]   { border-radius: var(--notto-radius-sm); }
+.notto-card[data-radius="md"]   { border-radius: var(--notto-radius-md); }
+.notto-card[data-radius="lg"]   { border-radius: var(--notto-radius-lg); }
+.notto-card[data-radius="xl"]   { border-radius: var(--notto-radius-xl); }
+.notto-card__header,
+.notto-card__footer {
+  padding: var(--notto-space-4);
+}
+.notto-card__header {
+  border-bottom: var(--notto-border-width) solid var(--notto-color-border);
+}
+.notto-card__footer {
+  border-top: var(--notto-border-width) solid var(--notto-color-border);
+}
+.notto-card__body {
+  padding: var(--notto-space-4);
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- Table ---------- */
+.notto-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--notto-font-body);
+  font-size: var(--notto-text-sm);
+}
+.notto-table thead th {
+  text-align: left;
+  padding: var(--notto-space-2) var(--notto-space-3);
+  font-size: var(--notto-text-xs);
+  font-weight: var(--notto-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--notto-color-muted-fg);
+  border-bottom: var(--notto-border-width) solid var(--notto-color-border);
+  white-space: nowrap;
+}
+.notto-table thead th[data-align="center"] { text-align: center; }
+.notto-table thead th[data-align="right"]  { text-align: right; }
+.notto-table tbody td {
+  padding: var(--notto-space-3);
+  border-bottom: var(--notto-border-width) solid var(--notto-color-border);
+  vertical-align: middle;
+}
+.notto-table tbody td[data-align="center"] { text-align: center; }
+.notto-table tbody td[data-align="right"]  { text-align: right; }
+.notto-table tbody tr:last-child td { border-bottom: none; }
+.notto-table[data-clickable="true"] tbody tr {
+  cursor: pointer;
+  transition: background 120ms;
+}
+.notto-table[data-clickable="true"] tbody tr:hover,
+.notto-table[data-clickable="true"] tbody tr:focus-visible {
+  background: var(--notto-color-muted);
+  outline: none;
+}
+.notto-table__empty {
+  text-align: center;
+  padding: var(--notto-space-6);
+  color: var(--notto-color-muted-fg);
+  font-style: italic;
+}
