@@ -61,7 +61,7 @@
   --notto-border-width: 1px;
 }
 
-/* Schematic Protocol preset (Truvelo) */
+/* Schematic Protocol preset */
 [data-notto-theme="schematic"] {
   --notto-color-background: #f9f9f9;
   --notto-color-foreground: #0a0a0a;

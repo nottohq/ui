@@ -139,10 +139,13 @@ export const buttonPropsSchema = z.strictObject({
 })
 
 export const iconPropsSchema = z.strictObject({
-  name: z.string(),
+  name: z.string().min(1).max(64),
   size: sizeFull.optional(),
   tone: toneText.optional(),
-  label: z.string().optional(),
+  // `label` must be non-empty when present. An empty label produces an icon
+  // with an empty accessible name — worse than no label at all, since it
+  // suppresses the `aria-hidden` fallback.
+  label: z.string().min(1).max(256).optional(),
 })
 
 export const linkPropsSchema = z.strictObject({

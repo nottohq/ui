@@ -81,6 +81,21 @@ describe('strict prop schemas', () => {
     expect(result.success).toBe(false)
   })
 
+  it('Icon rejects empty name', () => {
+    const result = iconPropsSchema.safeParse({ name: '' })
+    expect(result.success).toBe(false)
+  })
+
+  it('Icon rejects empty label', () => {
+    const result = iconPropsSchema.safeParse({ name: 'close', label: '' })
+    expect(result.success).toBe(false)
+  })
+
+  it('Icon accepts a non-empty label', () => {
+    const result = iconPropsSchema.safeParse({ name: 'close', label: 'Close' })
+    expect(result.success).toBe(true)
+  })
+
   it('Link rejects className (no escape hatches through JSON)', () => {
     const result = linkPropsSchema.safeParse({
       href: 'https://example.com',

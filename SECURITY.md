@@ -25,18 +25,26 @@ it deliberately leaves to the consuming application, are listed below.
    fragments (`#`). Control characters (`0x00–0x1f`, `0x7f`) and hrefs
    longer than 2048 characters are rejected. Leading/trailing whitespace is
    tolerated — trimmed before validation to prevent whitespace-based bypass.
-4. **Action safety.** `Button.action` and `Icon.name` are strings that must
+4. **Tabnabbing defense.** Any `Link` rendered with `target="_blank"` —
+   whether set via the `external` prop or passed directly by a React
+   consumer — automatically carries `rel="noopener noreferrer"`. Existing
+   `rel` values are preserved and augmented, not overwritten.
+5. **Action safety.** `Button.action` and `Icon.name` are strings that must
    resolve through host-provided registries (`actions` / `icons` props).
    Arbitrary click handlers or component imports cannot be injected via
    JSON. The registries are snapshotted and frozen on render — mid-render
    mutation by the consumer cannot bypass the allowlist.
-5. **DoS caps.** Bounded by default:
+6. **Accessibility-preserving inputs.** `Icon.label` must be a non-empty
+   string when present (or omitted entirely). Empty labels were previously
+   accepted and produced icons with empty accessible names — rejected at
+   the schema boundary now.
+7. **DoS caps.** Bounded by default:
    - `maxDepth` — 20 levels of nesting
    - `maxNodes` — 1000 total nodes in a tree
    - `maxTextLength` — 10,000 characters per text node
    - Hard schema cap of 100,000 characters per text node
    All caps are configurable as `NottoRenderer` props.
-6. **HTML injection.** React auto-escapes string children, and no primitive
+8. **HTML injection.** React auto-escapes string children, and no primitive
    provides a raw-HTML escape hatch. Text content renders as text.
 
 ### Out of scope — the consuming app's responsibility

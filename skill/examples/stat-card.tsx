@@ -1,10 +1,9 @@
-// Reference example — how to rewrite Truvelo's StatCard with @nottohq/ui primitives.
-// Original: https://github.com/truvelo/truvelo-admin/blob/main/components/stat-card.tsx
+// Reference example — a stat card built with @nottohq/ui primitives.
 //
-// Notes on the rewrite:
-// - No className, no style, no Tailwind strings. Intent props only.
-// - Dropped the dead `icon: React.ElementType` prop (original destructured it but never rendered it).
-// - Schematic Protocol look is inherited from the `data-notto-theme="schematic"` attribute on <html> or <body>.
+// Demonstrates the intent-level prop DSL:
+// - No className, no style, no Tailwind strings.
+// - Theme aesthetic is inherited from the `data-notto-theme` attribute on
+//   <html> or <body>; the component itself stays theme-agnostic.
 
 import { Box, Stack, Text } from '@nottohq/ui'
 

@@ -5,10 +5,11 @@ All notable changes to `@nottohq/ui`.
 Versions `0.0.x` are pre-1.0 — APIs may change without notice. `0.1.0` will
 cut the first stable surface.
 
-## 0.0.6 — 2026-04-18 · security hardening
+## 0.0.6 — 2026-04-19 · security hardening
 
 Final pre-release before `0.1.0`. Focused on closing attack surface in the
-runtime renderer (`@nottohq/ui/renderer`).
+runtime renderer (`@nottohq/ui/renderer`) and the `Link` primitive, plus a
+privacy pass to remove private attribution from public artifacts.
 
 ### Renderer hardening
 
@@ -27,6 +28,18 @@ runtime renderer (`@nottohq/ui/renderer`).
 - **Registry snapshotting.** `actions` and `icons` are shallow-copied and
   frozen on render, so mid-render mutation cannot bypass the allowlist.
 - **Type name cap.** Node `type` strings are capped at 64 characters.
+- **`Icon.name` and `Icon.label` non-empty.** Schema now rejects empty
+  strings for both. Empty labels were silently producing icons with empty
+  accessible names — worse than no label at all.
+
+### Primitive hardening
+
+- **`Link` tabnabbing defense.** Any new-tab link — whether opened via the
+  `external` prop or by a direct `target="_blank"` consumer override —
+  automatically gets `rel="noopener noreferrer"`. Existing `rel` values
+  are preserved and augmented instead of overwritten. Closes a pitfall
+  where humans using the React API could spread `target="_blank"` without
+  remembering the rel pairing.
 
 ### New error kinds
 
@@ -35,20 +48,28 @@ runtime renderer (`@nottohq/ui/renderer`).
 
 ### Tests
 
-Vitest added. Schema-level test suite covers:
-- All safe-href accept/reject cases (protocol-relative, control chars, etc.)
+Vitest suite covers:
+- Safe-href accept/reject cases (protocol-relative, control chars, etc.)
 - Strict prop rejection (unknown props, out-of-enum tones)
 - Recursive tree validation and caps
+- `Icon` schema empty-string rejection
+- `Link` tabnabbing defense (external, consumer-target, rel-merge cases)
 
 ### Docs
 
 - `SECURITY.md` at the repo root — threat model, reporting process,
-  recommended CSP.
+  recommended CSP. Updated with the new defenses.
+- Private attribution scrubbed from `README.md`, `CLAUDE.md`, and
+  `src/theme/styles.css`. Example renamed from `truvelo-stat-card.tsx`
+  to `stat-card.tsx` and rewritten as a neutral reference.
 
 ### No breaking changes to existing APIs
 
 All `0.0.5` code keeps working. The new caps are opt-in via defaults that
-are generous enough for normal usage.
+are generous enough for normal usage. The `Icon.label: ""` rejection is
+technically stricter than 0.0.5's behavior, but empty labels were never
+correct — consumers relying on that input shape were already shipping
+broken a11y.
 
 ## 0.0.5 — wave 3 primitives
 
