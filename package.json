@@ -1,6 +1,6 @@
 {
   "name": "@nottohq/ui",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Agent-friendly React UI primitives. Small surface, intent-level props, ships with a skill that teaches LLMs how to use it correctly. Optional runtime renderer for agent-emitted JSON.",
   "license": "MIT",
   "author": "Tanguy Merrien",
@@ -42,6 +42,8 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
@@ -58,7 +60,8 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "tsup": "^8.3.0",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
   },
   "keywords": [
     "react",

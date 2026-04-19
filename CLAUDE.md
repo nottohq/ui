@@ -28,15 +28,11 @@ Not a generic component library. Built to be *authored by LLMs* via the skill, a
 - Pure CSS with custom properties, no runtime CSS-in-JS
 - `clsx` is the only runtime dependency
 
-## First consumer
-
-[Truvelo admin panel](https://github.com/truvelo/truvelo-admin) drives primitive decisions. The "Schematic Protocol" theme preset in `src/theme/styles.css` mirrors Truvelo's design language.
-
 ## Build / test
 
 - `npm run build` — produces `dist/`
 - `npm run typecheck` — TS check, no emit
-- Heavy testing happens through consumer repos (Truvelo), not here
+- Heavy testing happens through consumer repos, not here
 
 ## Git
 

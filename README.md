@@ -45,7 +45,7 @@ Any agent framework that reads skills, rules, or system instructions can consume
 
 ## Status
 
-**Pre-alpha (0.0.x).** API is unstable. First consumer: [Truvelo](https://github.com/truvelo) bike service platform. Expect breaking changes until 0.1.0.
+**Pre-alpha (0.0.x).** API is unstable. Expect breaking changes until 0.1.0.
 
 ## License
 
