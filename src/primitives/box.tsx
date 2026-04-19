@@ -3,7 +3,7 @@ import type { HTMLAttributes, ReactNode, ElementType, Ref } from 'react'
 import { cn } from '../utils/cn'
 
 type Tone = 'neutral' | 'muted' | 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info'
-type Padding = 0 | 1 | 2 | 3 | 4 | 6 | 8 | 10 | 12
+type Padding = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12
 type Radius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full'
 
 export interface BoxProps extends HTMLAttributes<HTMLElement> {
