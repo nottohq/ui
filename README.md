@@ -26,7 +26,7 @@ export default function Hello() {
 
 ## Philosophy
 
-- **Small surface.** 13 primitives, no more.
+- **Small surface.** 14 primitives, no more.
 - **Uniform prop DSL.** `tone`, `variant`, `size`, `gap`, `padding`, `align`, `justify` mean the same thing everywhere.
 - **Intent props, never geometry.** You write `gap={4}`, the library decides the pixels.
 - **Theme via CSS custom properties.** Override tokens; no runtime theme objects.
@@ -45,7 +45,13 @@ Any agent framework that reads skills, rules, or system instructions can consume
 
 ## Status
 
-**Pre-alpha (0.0.x).** API is unstable. Expect breaking changes until 0.1.0.
+**0.1.x — first stable surface.** The primitive catalog, prop DSL, and
+renderer schema are frozen within the `0.1.x` line. Patch releases
+(`0.1.1`, `0.1.2`, …) are non-breaking by contract; breaking changes
+bump the minor. `1.0.0` drops the "pre-1.0" qualifier entirely.
+
+See [`CHANGELOG.md`](./CHANGELOG.md) and [`SECURITY.md`](./SECURITY.md)
+for the full history and threat model.
 
 ## License
 

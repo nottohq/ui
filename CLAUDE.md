@@ -4,13 +4,13 @@ Project instructions for `@nottohq/ui`.
 
 ## What this is
 
-Agent-friendly React UI primitives with a small surface (13 primitives planned), intent-level props, and a shipped skill that teaches LLMs how to use the library correctly.
+Agent-friendly React UI primitives with a small surface (14 primitives), intent-level props, a shipped skill that teaches LLMs how to use the library correctly, and a runtime renderer that turns validated JSON into a React tree.
 
 Not a generic component library. Built to be *authored by LLMs* via the skill, and *consumed by humans + agents* identically.
 
 ## Hard rules
 
-- **Small surface.** 13 primitives total (Page, Stack, Box, Text, Icon, Button, Link, Field, Card, Table, Modal, Toast, Badge). Do not add more without a real consumer proving the need.
+- **Small surface.** 14 primitives total (Page, Stack, Box, Text, Icon, Button, Link, Field, Card, Table, Modal, Toast, Badge, CodeBlock). Do not add more without a real consumer proving the need.
 - **Uniform prop DSL.** Every primitive uses the same vocabulary: `tone`, `variant`, `size`, `gap`, `padding`, `align`, `justify`.
 - **No geometry props.** Never expose pixel values or arbitrary CSS. Always tokenized (`gap={4}`, not `gap="17px"`).
 - **No escape hatches in examples.** `className` and `style` exist on types (humans may need them) but never appear in docs, examples, or the shipped skill. The skill flags them as anti-patterns.
@@ -18,7 +18,7 @@ Not a generic component library. Built to be *authored by LLMs* via the skill, a
 - **Accessibility default-on.** Primitives render semantic HTML without needing extra props.
 - **kebab-case file names.** All files and directories.
 - **React 19+.** Peer dependency only. No React version in dependencies.
-- **No Tailwind dependency.** Library ships its own CSS file. Consumers import `@notto/ui/styles.css`.
+- **No Tailwind dependency.** Library ships its own CSS file. Consumers import `@nottohq/ui/styles.css`.
 
 ## Stack
 
@@ -43,8 +43,13 @@ Not a generic component library. Built to be *authored by LLMs* via the skill, a
 ## Releasing
 
 - Versions follow semver
-- Pre-1.0 breaking changes bump the minor
+- Current line: **0.1.x** — first stable surface. Patches within this
+  minor are non-breaking by contract.
+- Pre-1.0 breaking changes bump the minor (0.1 → 0.2 is breaking; `1.0.0`
+  drops the "pre-1.0" qualifier)
 - Publish with `npm publish` — `prepublishOnly` runs the build
+- Tag releases with `v<version>` (annotated) and push the tag. Create a
+  GitHub Release with notes.
 
 ## Not in scope
 

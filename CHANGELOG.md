@@ -2,8 +2,48 @@
 
 All notable changes to `@nottohq/ui`.
 
-Versions `0.0.x` are pre-1.0 — APIs may change without notice. `0.1.0` will
-cut the first stable surface.
+Versions `0.0.x` were pre-1.0 with no API stability. **`0.1.x` is the
+first stable surface** — patches within the minor line are non-breaking
+by contract. Breaking changes bump the minor until `1.0.0`.
+
+## 0.1.0 — 2026-04-19 · first stable surface
+
+Promotes the tested `0.0.6` configuration to the first stable minor line.
+No runtime or API changes from `0.0.6` — this is a stability promise, not
+new code.
+
+### What "stable" means here
+
+- **Primitive catalog frozen within `0.1.x`** — 14 primitives (Page,
+  Stack, Box, Text, Icon, Button, Link, Field, Card, Table, Modal, Toast,
+  Badge, CodeBlock). No primitives will be added, removed, or renamed in
+  patch releases.
+- **Prop DSL frozen within `0.1.x`** — `tone`, `variant`, `size`, `gap`,
+  `padding`, `align`, `justify` keep their vocabularies and enum values.
+- **Renderer schema frozen within `0.1.x`** — `nottoNodeSchema` shape,
+  primitive allowlist, error kinds, and safety invariants (URL
+  allowlist, DoS caps, registry behavior) don't change in patches.
+- **CSS token surface frozen within `0.1.x`** — the `--notto-*` custom
+  properties are a stable theming API.
+
+### What will still change in patches
+
+- Bug fixes that tighten invariants without changing the allowed input
+  shape (e.g. a new blocked URL variant).
+- Performance improvements.
+- Additional tests.
+- Docs and skill clarifications.
+
+### Breaking changes are gated
+
+Anything that would break a 0.1.0 consumer lands in `0.2.0`, not a
+`0.1.x` patch. `1.0.0` is reserved for the point where the SemVer
+pre-1.0 qualifier is no longer accurate.
+
+### Migration from `0.0.6`
+
+None. `@nottohq/ui@0.1.0` is `@nottohq/ui@0.0.6` with a different
+version number.
 
 ## 0.0.6 — 2026-04-19 · security hardening
 

@@ -113,6 +113,14 @@ compose them in React-authored code.
 
 ## Versions
 
-Pre-1.0 releases (`0.0.x`) may change APIs without notice. `0.1.0` will
-establish the first stable surface. Security fixes will be backported to
-the latest pre-1.0 minor where reasonable.
+**`0.1.x` is the current stable line.** The primitive catalog, prop DSL,
+renderer schema, and safety invariants listed above are frozen within
+`0.1.x` — patch releases are non-breaking by contract.
+
+Security fixes land first on the current minor (`0.1.x`). Earlier
+pre-1.0 lines (`0.0.x`) receive backports only when the fix is trivial
+and the upstream issue is severe. When in doubt, upgrade to the latest
+`0.1.x`.
+
+Breaking changes — if any — bump the minor (`0.2.0`). `1.0.0` is
+reserved for when the "pre-1.0" qualifier is no longer accurate.
