@@ -6,6 +6,22 @@ Versions `0.0.x` were pre-1.0 with no API stability. **`0.1.x` is the
 first stable surface** — patches within the minor line are non-breaking
 by contract. Breaking changes bump the minor until `1.0.0`.
 
+## 0.1.1 — 2026-04-19 · Box padding scale fix
+
+Type-only patch. `Box`'s `padding` prop type was missing the `5` literal
+that `Stack` and `Page` both accept (and that the renderer schema
+already allowed). Widened `Box.padding` from `0|1|2|3|4|6|8|10|12` to
+`0|1|2|3|4|5|6|8|10|12` to match the rest of the library and the
+renderer surface.
+
+**Additive, non-breaking.** No `padding={4}` consumer changes behavior;
+the type just accepts one more literal.
+
+Caught by the `notto-ui` site during its `0.1.0` upgrade pass — a
+`<Box padding={5}>` expression that the renderer schema accepted was
+rejected by the React component's stricter type. Integration-test
+feedback loop working as designed.
+
 ## 0.1.0 — 2026-04-19 · first stable surface
 
 Promotes the tested `0.0.6` configuration to the first stable minor line.
