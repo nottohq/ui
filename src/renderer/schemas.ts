@@ -66,6 +66,9 @@ const toneLink = z.enum(['default', 'primary', 'secondary', 'muted'])
  *     to the current page scheme, an open-redirect vector
  *   - hrefs containing control characters (NUL, DEL, 0x00-0x1f) — these are
  *     used in bypass attempts (e.g. `javas\0cript:alert(1)`)
+ *   - `http(s)://user:pass@host/...` — userinfo-in-URL is a classic phishing
+ *     trick where the anchor text looks trusted but the resolved origin is
+ *     the host after `@`. Regex can't see this cleanly, so we parse.
  *   - hrefs longer than 2048 chars (reasonable browser limit; stops payload bombs)
  *
  * Leading/trailing whitespace is tolerated — trimmed before the regex check.
@@ -80,11 +83,30 @@ const safeHref = z
       if (/[\x00-\x1f\x7f]/.test(trimmed)) return false
       // Allowlist. Note the negative lookahead on the lone `/` — it blocks
       // `//evil.com` (protocol-relative) while still allowing `/internal/path`.
-      return /^(?:https?:\/\/|mailto:|tel:|#|\/(?!\/))/.test(trimmed)
+      if (!/^(?:https?:\/\/|mailto:|tel:|#|\/(?!\/))/.test(trimmed)) return false
+      // Secondary check for http(s): reject URLs that embed userinfo.
+      // The `URL` constructor collapses `https://@evil.com` to an empty
+      // userinfo, so a simple username/password check isn't enough — we
+      // also scan the literal authority for any `@`. The combination
+      // catches both `user:pass@host` and the bare-`@` phishing variant.
+      if (/^https?:\/\//i.test(trimmed)) {
+        const afterScheme = trimmed.replace(/^https?:\/\//i, '')
+        const sepIdx = afterScheme.search(/[/?#]/)
+        const authority =
+          sepIdx === -1 ? afterScheme : afterScheme.slice(0, sepIdx)
+        if (authority.includes('@')) return false
+        try {
+          const parsed = new URL(trimmed)
+          if (parsed.username !== '' || parsed.password !== '') return false
+        } catch {
+          return false
+        }
+      }
+      return true
     },
     {
       message:
-        'href must be http(s), mailto, tel, internal path, or fragment, and contain no control characters',
+        'href must be http(s), mailto, tel, internal path, or fragment, with no control characters, userinfo, or bypass variants',
     },
   )
 
@@ -134,7 +156,10 @@ export const buttonPropsSchema = z.strictObject({
   tone: toneButton.optional(),
   size: sizeSmall.optional(),
   loading: z.boolean().optional(),
-  action: z.string().optional(),
+  // `action` resolves through a host-provided registry — see
+  // `NottoRenderer`'s `actions` prop. Capped to bound error-message size
+  // and keep registry keys reasonable.
+  action: z.string().min(1).max(64).optional(),
   type: z.enum(['button', 'submit', 'reset']).optional(),
 })
 
@@ -180,10 +205,20 @@ export const pagePropsSchema = z.strictObject({
  */
 const TEXT_HARD_CAP = 100_000
 
+/**
+ * Hard cap on the number of items in a children array. Belt-and-braces for
+ * the renderer's `maxNodes` check: without this, a single node with 10,000
+ * text/number leaves would bypass `maxNodes` (which counts recursive nodes,
+ * not leaves) and still cost render time. The renderer counts array items
+ * toward `maxNodes` too, but the schema cap stops absurd payloads at parse
+ * time before memory is allocated for them.
+ */
+const CHILDREN_HARD_CAP = 1000
+
 // Recursive node schema — an agent emits a tree of these.
 export const nottoNodeSchema: z.ZodType<NottoNode> = z.lazy(() =>
   z.strictObject({
-    type: z.string().max(64),
+    type: z.string().min(1).max(64),
     props: z.record(z.string(), z.unknown()).optional(),
     children: nottoChildrenSchema.optional(),
   }),
@@ -194,8 +229,10 @@ const nottoChildrenSchema: z.ZodType<NottoChildren> = z.lazy(() =>
     z.string().max(TEXT_HARD_CAP),
     z.number(),
     nottoNodeSchema,
-    z.array(
-      z.union([z.string().max(TEXT_HARD_CAP), z.number(), nottoNodeSchema]),
-    ),
+    z
+      .array(
+        z.union([z.string().max(TEXT_HARD_CAP), z.number(), nottoNodeSchema]),
+      )
+      .max(CHILDREN_HARD_CAP),
   ]),
 )

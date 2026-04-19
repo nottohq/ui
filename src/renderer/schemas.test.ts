@@ -40,6 +40,12 @@ describe('safeHref (linkPropsSchema)', () => {
     ['', 'empty string'],
     ['ftp://example.com', 'unsupported scheme (ftp)'],
     ['x'.repeat(3000), 'over 2048 chars'],
+    // Userinfo phishing vectors — anchor text looks like "trusted.com",
+    // effective origin is the host after "@".
+    ['https://trusted.com@evil.com/', 'userinfo phishing (username only)'],
+    ['https://user:pass@evil.com/path', 'userinfo phishing (user:pass)'],
+    ['http://admin@internal/', 'http userinfo'],
+    ['https://@evil.com', 'bare @ userinfo'],
   ])('rejects %s (%s)', (href) => {
     const result = linkPropsSchema.safeParse({ href })
     expect(result.success).toBe(false)
@@ -69,6 +75,16 @@ describe('strict prop schemas', () => {
       action: 'save',
     })
     expect(result.success).toBe(true)
+  })
+
+  it('Button rejects empty action', () => {
+    const result = buttonPropsSchema.safeParse({ action: '' })
+    expect(result.success).toBe(false)
+  })
+
+  it('Button rejects action string over 64 chars', () => {
+    const result = buttonPropsSchema.safeParse({ action: 'a'.repeat(65) })
+    expect(result.success).toBe(false)
   })
 
   it('Stack rejects out-of-scale gap', () => {
@@ -150,5 +166,26 @@ describe('nottoNodeSchema', () => {
       children: 'x'.repeat(100_000),
     })
     expect(result.success).toBe(true)
+  })
+
+  it('rejects children arrays over 1000 items', () => {
+    const result = nottoNodeSchema.safeParse({
+      type: 'Stack',
+      children: Array.from({ length: 1001 }, () => 'x'),
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('accepts children arrays up to 1000 items', () => {
+    const result = nottoNodeSchema.safeParse({
+      type: 'Stack',
+      children: Array.from({ length: 1000 }, () => 'x'),
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects empty type strings', () => {
+    const result = nottoNodeSchema.safeParse({ type: '' })
+    expect(result.success).toBe(false)
   })
 })

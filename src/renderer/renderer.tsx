@@ -67,18 +67,32 @@ const DEFAULT_MAX_NODES = 1000
 const DEFAULT_MAX_TEXT_LENGTH = 10_000
 
 /**
+ * Clamp user-controlled strings echoed into error messages. Consumers
+ * commonly forward `onError` into logging/telemetry pipelines; we don't
+ * want an attacker-controlled string (capped at the schema layer but still
+ * up to dozens of chars) to dominate log entries.
+ */
+const ECHO_MAX = 60
+function echo(s: string): string {
+  return s.length > ECHO_MAX ? `${s.slice(0, ECHO_MAX)}…` : s
+}
+
+/**
  * NottoRenderer — renders a validated JSON tree as @nottohq/ui primitives.
  *
  * Layer 1 (UI safety) enforcement:
  *   - Only allowlisted primitive types render.
  *   - Each primitive's props are zod-validated against a strict schema.
  *   - `Link.href` is allowlisted (no javascript:/data:/vbscript:/file:/
- *     protocol-relative/control chars).
+ *     protocol-relative/control chars/userinfo).
  *   - DoS caps: `maxDepth` (default 20), `maxNodes` (default 1000),
- *     `maxTextLength` per text node (default 10,000).
+ *     `maxTextLength` per text node (default 10,000). Leaf children
+ *     (strings/numbers inside an array) count toward `maxNodes` too.
  *   - Action and icon registries are snapshotted (shallow-copied + frozen)
  *     on render, so mid-render mutation by the consumer cannot bypass
  *     the allowlist.
+ *   - User-controlled strings echoed into error messages are clamped so
+ *     onError telemetry can't be flooded by huge inputs.
  *
  * Invalid input calls `onError` with a typed `RendererError` and returns
  * `fallback`. No exception reaches the React tree.
@@ -156,7 +170,7 @@ function renderNode(
   const entry = PRIMITIVES[node.type]
   if (!entry) {
     throw new RendererError(
-      `Unknown primitive type: "${node.type}"`,
+      `Unknown primitive type: "${echo(node.type)}"`,
       'unknown-type',
       path,
     )
@@ -165,7 +179,7 @@ function renderNode(
   const propsResult = entry.propsSchema.safeParse(node.props ?? {})
   if (!propsResult.success) {
     throw new RendererError(
-      `Invalid props for ${node.type}: ${propsResult.error.message}`,
+      `Invalid props for ${echo(node.type)}: ${echo(propsResult.error.message)}`,
       'invalid-props',
       path,
     )
@@ -178,7 +192,7 @@ function renderNode(
     const handler = ctx.actions[props.action]
     if (!handler) {
       throw new RendererError(
-        `Unknown action: "${props.action}"`,
+        `Unknown action: "${echo(props.action)}"`,
         'unknown-action',
         path,
       )
@@ -192,7 +206,7 @@ function renderNode(
     const iconComponent = ctx.icons[props.name]
     if (!iconComponent) {
       throw new RendererError(
-        `Unknown icon: "${props.name}"`,
+        `Unknown icon: "${echo(props.name)}"`,
         'unknown-icon',
         path,
       )
@@ -220,6 +234,23 @@ function renderChildren(
   }
   if (typeof children === 'number') return children
   if (Array.isArray(children)) {
+    // Count string/number leaves toward maxNodes. Nested nodes are counted
+    // by renderNode itself, so they aren't tallied here (double-count).
+    // Without this, `{type: "Stack", children: [<10k strings>]}` would
+    // pass all caps: maxNodes tracks recursive renderNode calls only, and
+    // each string stays below maxTextLength individually.
+    let leafCount = 0
+    for (const c of children) {
+      if (typeof c === 'string' || typeof c === 'number') leafCount++
+    }
+    ctx.nodeCount.current += leafCount
+    if (ctx.nodeCount.current > ctx.maxNodes) {
+      throw new RendererError(
+        `Max node count (${ctx.maxNodes}) exceeded`,
+        'max-nodes',
+        path,
+      )
+    }
     return children.map((child, i) => {
       if (typeof child === 'string') {
         checkTextLength(child, ctx, [...path, String(i)])

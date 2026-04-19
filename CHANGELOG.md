@@ -18,19 +18,34 @@ privacy pass to remove private attribution from public artifacts.
   making it an open-redirect vector. Now rejected.
 - **Block control characters in hrefs** (`0x00–0x1f`, `0x7f`). Prevents
   `javas\0cript:alert(1)` and similar bypass attempts.
+- **Block userinfo in `http(s)` hrefs.** `https://trusted.com@evil.com/`
+  is a classic phishing vector — anchor text looks trusted, effective
+  origin is `evil.com`. Rejected via a combined authority-`@` check and
+  `URL` constructor parse (the bare-`@` variant collapses to empty
+  userinfo, which the parse check alone misses).
 - **Trim tolerance on hrefs.** Leading/trailing whitespace is trimmed
   before validation so `  javascript:...` can't slip through.
+- **Leaf-counting DoS defense.** String and number children inside a
+  children array now count toward `maxNodes`. Previously, a single parent
+  with 10,000 text leaves bypassed every cap — `maxNodes` only counted
+  recursive node calls. Schema also hard-caps children arrays at 1,000
+  items.
 - **DoS caps** on the renderer, all configurable via `NottoRenderer` props:
-  - `maxNodes` (default 1000) — total node count across the tree
+  - `maxNodes` (default 1000) — total nodes *and* leaf children across the tree
   - `maxTextLength` (default 10,000) — characters per text node
-  - Schema hard cap of 100,000 chars per string blocks absurd payloads
-    before memory is allocated for them
+  - Schema hard caps: 100K chars per text node, 1,000 items per children
+    array, 64 chars for `type` / `Button.action` / `Icon.name`
 - **Registry snapshotting.** `actions` and `icons` are shallow-copied and
   frozen on render, so mid-render mutation cannot bypass the allowlist.
-- **Type name cap.** Node `type` strings are capped at 64 characters.
-- **`Icon.name` and `Icon.label` non-empty.** Schema now rejects empty
-  strings for both. Empty labels were silently producing icons with empty
-  accessible names — worse than no label at all.
+- **Type name cap + non-empty.** Node `type` is 1–64 chars.
+- **`Icon.name`, `Icon.label`, `Button.action` non-empty + capped.**
+  Schema rejects empty strings and over-length values. Empty labels were
+  silently producing icons with empty accessible names — worse than no
+  label at all.
+- **Error-message echo clamp.** User-controlled strings in
+  `RendererError.message` are clamped at 60 chars with an ellipsis. Keeps
+  consumer logging pipelines (Sentry, Datadog, etc.) from being flooded
+  by schema-capped-but-still-large attacker input.
 
 ### Primitive hardening
 
@@ -48,17 +63,23 @@ privacy pass to remove private attribution from public artifacts.
 
 ### Tests
 
-Vitest suite covers:
-- Safe-href accept/reject cases (protocol-relative, control chars, etc.)
+Vitest suite covers (57 tests total):
+- Safe-href accept/reject cases (protocol-relative, control chars,
+  userinfo phishing variants, etc.)
 - Strict prop rejection (unknown props, out-of-enum tones)
-- Recursive tree validation and caps
-- `Icon` schema empty-string rejection
+- Recursive tree validation and caps (including children-array cap)
+- `Icon` and `Button.action` empty-string + max-length rejection
 - `Link` tabnabbing defense (external, consumer-target, rel-merge cases)
+- Renderer leaf-counting DoS defense (string/number children count
+  toward `maxNodes`, nested nodes aren't double-counted)
+- Renderer error-message echo clamp
 
 ### Docs
 
-- `SECURITY.md` at the repo root — threat model, reporting process,
-  recommended CSP. Updated with the new defenses.
+- `SECURITY.md` — threat model, reporting process, recommended CSP, now
+  covering every defense above. Adds an inline-style CSP caveat for the
+  React-only primitives (`Table` with `col.width`) so consumers know
+  when `style-src 'self'` is reachable.
 - Private attribution scrubbed from `README.md`, `CLAUDE.md`, and
   `src/theme/styles.css`. Example renamed from `truvelo-stat-card.tsx`
   to `stat-card.tsx` and rewritten as a neutral reference.
@@ -66,10 +87,11 @@ Vitest suite covers:
 ### No breaking changes to existing APIs
 
 All `0.0.5` code keeps working. The new caps are opt-in via defaults that
-are generous enough for normal usage. The `Icon.label: ""` rejection is
-technically stricter than 0.0.5's behavior, but empty labels were never
-correct — consumers relying on that input shape were already shipping
-broken a11y.
+are generous enough for normal usage. The `Icon.label: ""`,
+`Icon.name: ""`, `Button.action: ""`, and `node.type: ""` rejections are
+technically stricter than 0.0.5's behavior, but those inputs were always
+broken — consumers relying on that input shape were already shipping
+broken a11y or guaranteed-failing lookups.
 
 ## 0.0.5 — wave 3 primitives
 

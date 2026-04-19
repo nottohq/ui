@@ -22,9 +22,11 @@ it deliberately leaves to the consuming application, are listed below.
    rejected.
 3. **URL safety.** `Link.href` is allowlisted to `http(s)://`, `mailto:`,
    `tel:`, internal paths (single `/`, **not** protocol-relative `//`), and
-   fragments (`#`). Control characters (`0x00–0x1f`, `0x7f`) and hrefs
-   longer than 2048 characters are rejected. Leading/trailing whitespace is
-   tolerated — trimmed before validation to prevent whitespace-based bypass.
+   fragments (`#`). Control characters (`0x00–0x1f`, `0x7f`), hrefs longer
+   than 2048 characters, and `http(s)://` URLs with userinfo (e.g.
+   `https://trusted.com@evil.com/`, a classic phishing vector) are
+   rejected. Leading/trailing whitespace is tolerated — trimmed before
+   validation to prevent whitespace-based bypass.
 4. **Tabnabbing defense.** Any `Link` rendered with `target="_blank"` —
    whether set via the `external` prop or passed directly by a React
    consumer — automatically carries `rel="noopener noreferrer"`. Existing
@@ -40,10 +42,18 @@ it deliberately leaves to the consuming application, are listed below.
    the schema boundary now.
 7. **DoS caps.** Bounded by default:
    - `maxDepth` — 20 levels of nesting
-   - `maxNodes` — 1000 total nodes in a tree
+   - `maxNodes` — 1000 total nodes *and* leaf children (string/number
+     items inside a children array count too, not just recursive nodes —
+     otherwise a single parent with 10,000 text leaves would bypass the
+     cap entirely)
    - `maxTextLength` — 10,000 characters per text node
-   - Hard schema cap of 100,000 characters per text node
-   All caps are configurable as `NottoRenderer` props.
+   - Schema hard caps: 100,000 chars per text node, 1,000 items per
+     children array, 64 chars for node `type`, 64 chars for
+     `Button.action` and `Icon.name`
+   All renderer caps are configurable as `NottoRenderer` props.
+   User-controlled strings echoed into `RendererError.message` are
+   clamped at 60 chars with an ellipsis, so consumer logging pipelines
+   can't be flooded even if the source input is at the schema cap.
 8. **HTML injection.** React auto-escapes string children, and no primitive
    provides a raw-HTML escape hatch. Text content renders as text.
 
@@ -74,8 +84,24 @@ Content-Security-Policy:
 ```
 
 The library ships a single CSS file (`@nottohq/ui/styles.css`). It does not
-emit inline scripts or inline styles, does not fetch any external resources
-at runtime, and does not perform runtime code compilation.
+emit inline scripts, does not fetch any external resources at runtime, and
+does not perform runtime code compilation.
+
+### Inline-style caveat
+
+Everything available through the **runtime renderer** (`@nottohq/ui/renderer`)
+conforms to the CSP above — no inline styles are emitted.
+
+Two React-only primitives (not in the renderer allowlist) may emit inline
+`style` attributes under specific configurations:
+
+- **`Table`** with `col.width` set emits `style="width: …"` on cells.
+  Consumers using `col.width` under `style-src 'self'` should either omit
+  the `width` option and size columns in their own stylesheet, or relax
+  `style-src` with a nonce.
+
+If your app renders agent-authored JSON only, this does not apply — those
+primitives are never reachable from the renderer.
 
 ## Primitives NOT available through the runtime renderer
 
