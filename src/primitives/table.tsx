@@ -1,37 +1,34 @@
-import { forwardRef } from 'react'
-import type { ReactNode, Ref, TableHTMLAttributes } from 'react'
-import { cn } from '../utils/cn'
+import { forwardRef } from "react";
+import type { ReactNode, Ref, TableHTMLAttributes } from "react";
+import { cn } from "../utils/cn";
 
-type Align = 'left' | 'center' | 'right'
+type Align = "left" | "center" | "right";
 
 export interface TableColumn<T> {
   /** Stable key — used as column identifier and, by default, as the cell value accessor. */
-  key: string
+  key: string;
   /** Column heading text. */
-  header: string
+  header: string;
   /** Custom cell renderer. If omitted, renders `String(row[key])`. */
-  render?: (row: T) => ReactNode
-  align?: Align
+  render?: (row: T) => ReactNode;
+  align?: Align;
   /** Optional column width (CSS length). */
-  width?: string
+  width?: string;
 }
 
-export interface TableProps<T>
-  extends Omit<TableHTMLAttributes<HTMLTableElement>, 'children'> {
-  columns: TableColumn<T>[]
-  rows: T[]
+export interface TableProps<T> extends Omit<TableHTMLAttributes<HTMLTableElement>, "children"> {
+  columns: TableColumn<T>[];
+  rows: T[];
   /** Stable key for each row. Falls back to index if omitted. */
-  getRowKey?: (row: T, index: number) => string | number
+  getRowKey?: (row: T, index: number) => string | number;
   /** Called when a row is clicked — makes rows keyboard-focusable. */
-  onRowClick?: (row: T) => void
+  onRowClick?: (row: T) => void;
   /** Shown when `rows` is empty. Default "No data." */
-  emptyMessage?: string
+  emptyMessage?: string;
 }
 
 /** @internal — helper for JSX inference (generic forwardRef loses type parameter). */
-type TableComponent = <T>(
-  props: TableProps<T> & { ref?: Ref<HTMLTableElement> },
-) => ReactNode
+type TableComponent = <T>(props: TableProps<T> & { ref?: Ref<HTMLTableElement> }) => ReactNode;
 
 const TableImpl = forwardRef(function Table<T>(
   {
@@ -39,7 +36,7 @@ const TableImpl = forwardRef(function Table<T>(
     rows,
     getRowKey,
     onRowClick,
-    emptyMessage = 'No data.',
+    emptyMessage = "No data.",
     className,
     ...rest
   }: TableProps<T>,
@@ -48,8 +45,8 @@ const TableImpl = forwardRef(function Table<T>(
   return (
     <table
       ref={ref}
-      className={cn('notto-table', className)}
-      data-clickable={onRowClick ? 'true' : undefined}
+      className={cn("notto-table", className)}
+      data-clickable={onRowClick ? "true" : undefined}
       {...rest}
     >
       <thead>
@@ -75,7 +72,7 @@ const TableImpl = forwardRef(function Table<T>(
           </tr>
         ) : (
           rows.map((row, index) => {
-            const key = getRowKey ? getRowKey(row, index) : index
+            const key = getRowKey ? getRowKey(row, index) : index;
             return (
               <tr
                 key={key}
@@ -84,9 +81,9 @@ const TableImpl = forwardRef(function Table<T>(
                 onKeyDown={
                   onRowClick
                     ? (e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
-                          onRowClick(row)
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onRowClick(row);
                         }
                       }
                     : undefined
@@ -96,16 +93,16 @@ const TableImpl = forwardRef(function Table<T>(
                   <td key={col.key} data-align={col.align}>
                     {col.render
                       ? col.render(row)
-                      : String((row as Record<string, unknown>)[col.key] ?? '')}
+                      : String((row as Record<string, unknown>)[col.key] ?? "")}
                   </td>
                 ))}
               </tr>
-            )
+            );
           })
         )}
       </tbody>
     </table>
-  )
-})
+  );
+});
 
-export const Table = TableImpl as TableComponent
+export const Table = TableImpl as TableComponent;

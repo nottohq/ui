@@ -17,17 +17,17 @@
 //   Out: Field, Modal, Toast, Card, Table — these need React-authored code
 //        (forms carry state, overlays are imperative, tables need render funcs)
 
-export { Page, type PageProps } from './primitives/page'
-export { Stack, type StackProps } from './primitives/stack'
-export { Box, type BoxProps } from './primitives/box'
-export { Text, type TextProps } from './primitives/text'
-export { Button, type ButtonProps } from './primitives/button'
-export { Icon, type IconProps } from './primitives/icon'
-export { Link, type LinkProps } from './primitives/link'
-export { Badge, type BadgeProps } from './primitives/badge'
-export { CodeBlock, type CodeBlockProps } from './primitives/codeblock'
-export { Field, type FieldProps, type FieldOption, type FieldType } from './primitives/field'
-export { Modal, type ModalProps } from './primitives/modal'
-export { ToastProvider, useToast, type ToastOptions } from './primitives/toast'
-export { Card, type CardProps } from './primitives/card'
-export { Table, type TableProps, type TableColumn } from './primitives/table'
+export { Page, type PageProps } from "./primitives/page";
+export { Stack, type StackProps } from "./primitives/stack";
+export { Box, type BoxProps } from "./primitives/box";
+export { Text, type TextProps } from "./primitives/text";
+export { Button, type ButtonProps } from "./primitives/button";
+export { Icon, type IconProps } from "./primitives/icon";
+export { Link, type LinkProps } from "./primitives/link";
+export { Badge, type BadgeProps } from "./primitives/badge";
+export { CodeBlock, type CodeBlockProps } from "./primitives/codeblock";
+export { Field, type FieldProps, type FieldOption, type FieldType } from "./primitives/field";
+export { Modal, type ModalProps } from "./primitives/modal";
+export { ToastProvider, useToast, type ToastOptions } from "./primitives/toast";
+export { Card, type CardProps } from "./primitives/card";
+export { Table, type TableProps, type TableColumn } from "./primitives/table";

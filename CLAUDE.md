@@ -6,7 +6,7 @@ Project instructions for `@nottohq/ui`.
 
 Agent-friendly React UI primitives with a small surface (14 primitives), intent-level props, a shipped skill that teaches LLMs how to use the library correctly, and a runtime renderer that turns validated JSON into a React tree.
 
-Not a generic component library. Built to be *authored by LLMs* via the skill, and *consumed by humans + agents* identically.
+Not a generic component library. Built to be _authored by LLMs_ via the skill, and _consumed by humans + agents_ identically.
 
 ## Hard rules
 

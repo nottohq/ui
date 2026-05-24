@@ -42,7 +42,7 @@ it deliberately leaves to the consuming application, are listed below.
    the schema boundary now.
 7. **DoS caps.** Bounded by default:
    - `maxDepth` — 20 levels of nesting
-   - `maxNodes` — 1000 total nodes *and* leaf children (string/number
+   - `maxNodes` — 1000 total nodes _and_ leaf children (string/number
      items inside a children array count too, not just recursive nodes —
      otherwise a single parent with 10,000 text leaves would bypass the
      cap entirely)
@@ -50,10 +50,10 @@ it deliberately leaves to the consuming application, are listed below.
    - Schema hard caps: 100,000 chars per text node, 1,000 items per
      children array, 64 chars for node `type`, 64 chars for
      `Button.action` and `Icon.name`
-   All renderer caps are configurable as `NottoRenderer` props.
-   User-controlled strings echoed into `RendererError.message` are
-   clamped at 60 chars with an ellipsis, so consumer logging pipelines
-   can't be flooded even if the source input is at the schema cap.
+     All renderer caps are configurable as `NottoRenderer` props.
+     User-controlled strings echoed into `RendererError.message` are
+     clamped at 60 chars with an ellipsis, so consumer logging pipelines
+     can't be flooded even if the source input is at the schema cap.
 8. **HTML injection.** React auto-escapes string children, and no primitive
    provides a raw-HTML escape hatch. Text content renders as text.
 

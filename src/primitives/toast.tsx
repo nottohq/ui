@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   createContext,
@@ -8,69 +8,69 @@ import {
   useRef,
   useState,
   type ReactNode,
-} from 'react'
+} from "react";
 
-type ToastTone = 'neutral' | 'success' | 'danger' | 'warning' | 'info'
+type ToastTone = "neutral" | "success" | "danger" | "warning" | "info";
 
 export interface ToastOptions {
-  tone?: ToastTone
-  title: string
-  description?: string
+  tone?: ToastTone;
+  title: string;
+  description?: string;
   /** Auto-dismiss after N ms. Pass 0 to disable. Default 5000. */
-  duration?: number
+  duration?: number;
   /** Optional action button inside the toast. */
-  action?: { label: string; onClick: () => void }
+  action?: { label: string; onClick: () => void };
 }
 
 interface ActiveToast extends ToastOptions {
-  id: string
+  id: string;
 }
 
 interface ToastContextValue {
-  add: (toast: ToastOptions) => string
-  remove: (id: string) => void
+  add: (toast: ToastOptions) => string;
+  remove: (id: string) => void;
 }
 
-const ToastContext = createContext<ToastContextValue | null>(null)
+const ToastContext = createContext<ToastContextValue | null>(null);
 
-let toastCounter = 0
+let toastCounter = 0;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<ActiveToast[]>([])
-  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
+  const [toasts, setToasts] = useState<ActiveToast[]>([]);
+  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const remove = useCallback((id: string) => {
-    const timer = timersRef.current.get(id)
+    const timer = timersRef.current.get(id);
     if (timer !== undefined) {
-      clearTimeout(timer)
-      timersRef.current.delete(id)
+      clearTimeout(timer);
+      timersRef.current.delete(id);
     }
-    setToasts((prev) => prev.filter((t) => t.id !== id))
-  }, [])
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
 
   const add = useCallback(
     (options: ToastOptions) => {
-      toastCounter += 1
-      const id = `notto-toast-${toastCounter}`
-      const duration = options.duration ?? 5000
-      setToasts((prev) => [...prev, { ...options, id }])
+      toastCounter += 1;
+      const id = `notto-toast-${toastCounter}`;
+      const duration = options.duration ?? 5000;
+      setToasts((prev) => [...prev, { ...options, id }]);
       if (duration > 0) {
-        const timer = setTimeout(() => remove(id), duration)
-        timersRef.current.set(id, timer)
+        const timer = setTimeout(() => remove(id), duration);
+        timersRef.current.set(id, timer);
       }
-      return id
+      return id;
     },
     [remove],
-  )
+  );
 
   // Clear all timers on unmount
   useEffect(() => {
-    const timers = timersRef.current
+    const timers = timersRef.current;
     return () => {
-      timers.forEach((t) => clearTimeout(t))
-      timers.clear()
-    }
-  }, [])
+      timers.forEach((t) => clearTimeout(t));
+      timers.clear();
+    };
+  }, []);
 
   return (
     <ToastContext.Provider value={{ add, remove }}>
@@ -82,12 +82,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         aria-live="polite"
       >
         {toasts.map((t) => (
-          <div
-            key={t.id}
-            className="notto-toast"
-            data-tone={t.tone ?? 'neutral'}
-            role="status"
-          >
+          <div key={t.id} className="notto-toast" data-tone={t.tone ?? "neutral"} role="status">
             <div className="notto-toast__body">
               <div className="notto-toast__title">{t.title}</div>
               {t.description ? (
@@ -99,8 +94,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 type="button"
                 className="notto-toast__action"
                 onClick={() => {
-                  t.action?.onClick()
-                  remove(t.id)
+                  t.action?.onClick();
+                  remove(t.id);
                 }}
               >
                 {t.action.label}
@@ -118,14 +113,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         ))}
       </div>
     </ToastContext.Provider>
-  )
+  );
 }
 
 /** Returns a function that enqueues a new toast. */
 export function useToast() {
-  const ctx = useContext(ToastContext)
+  const ctx = useContext(ToastContext);
   if (!ctx) {
-    throw new Error('useToast must be used within a <ToastProvider>')
+    throw new Error("useToast must be used within a <ToastProvider>");
   }
-  return ctx.add
+  return ctx.add;
 }
