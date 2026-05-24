@@ -1,25 +1,25 @@
-'use client'
+"use client";
 
-import { useEffect, useId, useRef } from 'react'
-import type { MouseEvent, ReactNode } from 'react'
-import { cn } from '../utils/cn'
+import { useEffect, useId, useRef } from "react";
+import type { MouseEvent, ReactNode } from "react";
+import { cn } from "../utils/cn";
 
-type ModalSize = 'sm' | 'md' | 'lg'
+type ModalSize = "sm" | "md" | "lg";
 
 export interface ModalProps {
   /** Controlled open state. */
-  open: boolean
+  open: boolean;
   /** Called when the user dismisses (close button, backdrop click, ESC). */
-  onDismiss: () => void
+  onDismiss: () => void;
   /** Required for a11y — becomes the dialog's accessible name. */
-  title: string
+  title: string;
   /** Optional accessible description. */
-  description?: string
+  description?: string;
   /** Max-width preset. Default `md`. */
-  size?: ModalSize
+  size?: ModalSize;
   /** Dialog body content. */
-  children?: ReactNode
-  className?: string
+  children?: ReactNode;
+  className?: string;
 }
 
 /**
@@ -31,46 +31,46 @@ export function Modal({
   onDismiss,
   title,
   description,
-  size = 'md',
+  size = "md",
   children,
   className,
 }: ModalProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
-  const titleId = useId()
-  const descriptionId = useId()
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  const descriptionId = useId();
 
   // Sync open prop with native dialog state
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
+    const dialog = dialogRef.current;
+    if (!dialog) return;
     if (open && !dialog.open) {
-      dialog.showModal()
+      dialog.showModal();
     } else if (!open && dialog.open) {
-      dialog.close()
+      dialog.close();
     }
-  }, [open])
+  }, [open]);
 
   // Native dialog fires 'close' on ESC or dialog.close()
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-    const handleClose = () => onDismiss()
-    dialog.addEventListener('close', handleClose)
-    return () => dialog.removeEventListener('close', handleClose)
-  }, [onDismiss])
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const handleClose = () => onDismiss();
+    dialog.addEventListener("close", handleClose);
+    return () => dialog.removeEventListener("close", handleClose);
+  }, [onDismiss]);
 
   // Backdrop click: the <dialog> element itself is the backdrop;
   // the inner content wrapper is a child. So e.target === dialog means backdrop.
   const handleBackdropClick = (e: MouseEvent<HTMLDialogElement>) => {
     if (e.target === dialogRef.current) {
-      dialogRef.current.close()
+      dialogRef.current.close();
     }
-  }
+  };
 
   return (
     <dialog
       ref={dialogRef}
-      className={cn('notto-modal', className)}
+      className={cn("notto-modal", className)}
       data-size={size}
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
@@ -90,5 +90,5 @@ export function Modal({
         <div className="notto-modal__body">{children}</div>
       </div>
     </dialog>
-  )
+  );
 }

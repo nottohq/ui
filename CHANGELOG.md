@@ -87,7 +87,7 @@ privacy pass to remove private attribution from public artifacts.
   recursive node calls. Schema also hard-caps children arrays at 1,000
   items.
 - **DoS caps** on the renderer, all configurable via `NottoRenderer` props:
-  - `maxNodes` (default 1000) — total nodes *and* leaf children across the tree
+  - `maxNodes` (default 1000) — total nodes _and_ leaf children across the tree
   - `maxTextLength` (default 10,000) — characters per text node
   - Schema hard caps: 100K chars per text node, 1,000 items per children
     array, 64 chars for `type` / `Button.action` / `Icon.name`
@@ -120,6 +120,7 @@ privacy pass to remove private attribution from public artifacts.
 ### Tests
 
 Vitest suite covers (57 tests total):
+
 - Safe-href accept/reject cases (protocol-relative, control chars,
   userinfo phishing variants, etc.)
 - Strict prop rejection (unknown props, out-of-enum tones)

@@ -2,7 +2,7 @@
 // Opt-in subpath. Consumers of primitives only pay zod's weight when they
 // import from here.
 
-export { NottoRenderer } from './renderer'
+export { NottoRenderer } from "./renderer";
 
 export {
   RendererError,
@@ -13,7 +13,7 @@ export {
   type ActionRegistry,
   type IconRegistry,
   type RendererErrorKind,
-} from './types'
+} from "./types";
 
 // Schemas are exported so consuming apps can compose Layer 2 validation
 // (domain-appropriate section types, business invariants, access control)
@@ -29,4 +29,4 @@ export {
   linkPropsSchema,
   badgePropsSchema,
   codeBlockPropsSchema,
-} from './schemas'
+} from "./schemas";

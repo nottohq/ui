@@ -1,72 +1,65 @@
-'use client'
+"use client";
 
-import { forwardRef, useId } from 'react'
-import type { ChangeEvent, ReactNode, Ref } from 'react'
-import { cn } from '../utils/cn'
+import { forwardRef, useId } from "react";
+import type { ChangeEvent, ReactNode, Ref } from "react";
+import { cn } from "../utils/cn";
 
 // All text-like input types
 type TextInputType =
-  | 'text'
-  | 'email'
-  | 'password'
-  | 'number'
-  | 'tel'
-  | 'url'
-  | 'search'
-  | 'date'
-  | 'time'
+  | "text"
+  | "email"
+  | "password"
+  | "number"
+  | "tel"
+  | "url"
+  | "search"
+  | "date"
+  | "time";
 
-export type FieldType =
-  | TextInputType
-  | 'textarea'
-  | 'select'
-  | 'checkbox'
-  | 'switch'
+export type FieldType = TextInputType | "textarea" | "select" | "checkbox" | "switch";
 
 export interface FieldOption {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }
 
 export interface FieldProps {
   /** Required — becomes the control's accessible name. */
-  label: string
+  label: string;
   /** Defaults to `text`. */
-  type?: FieldType
-  name?: string
-  value?: string | number
-  defaultValue?: string | number
-  checked?: boolean
-  defaultChecked?: boolean
-  onChange?: (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
-  ) => void
+  type?: FieldType;
+  name?: string;
+  value?: string | number;
+  defaultValue?: string | number;
+  checked?: boolean;
+  defaultChecked?: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   /** Helper text shown below the control. */
-  help?: string
+  help?: string;
   /** Error message — styles the field as invalid and adds role="alert". */
-  error?: string
-  required?: boolean
-  disabled?: boolean
-  readOnly?: boolean
-  placeholder?: string
-  autoComplete?: string
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+  placeholder?: string;
+  autoComplete?: string;
   /** For `type="textarea"`. Default 4. */
-  rows?: number
+  rows?: number;
   /** For `type="number"`. */
-  min?: number | string
-  max?: number | string
-  step?: number | string
+  min?: number | string;
+  max?: number | string;
+  step?: number | string;
   /** For `type="select"`. */
-  options?: FieldOption[]
+  options?: FieldOption[];
   /** Explicit id override. If omitted, a stable auto-generated id is used. */
-  id?: string
-  className?: string
+  id?: string;
+  className?: string;
 }
 
 export const Field = forwardRef<HTMLElement, FieldProps>(function Field(
   {
     label,
-    type = 'text',
+    type = "text",
     name,
     value,
     defaultValue,
@@ -90,13 +83,13 @@ export const Field = forwardRef<HTMLElement, FieldProps>(function Field(
   },
   ref,
 ) {
-  const autoId = useId()
-  const id = idProp ?? autoId
-  const helpId = help ? `${id}-help` : undefined
-  const errorId = error ? `${id}-error` : undefined
-  const describedBy = [helpId, errorId].filter(Boolean).join(' ') || undefined
+  const autoId = useId();
+  const id = idProp ?? autoId;
+  const helpId = help ? `${id}-help` : undefined;
+  const errorId = error ? `${id}-error` : undefined;
+  const describedBy = [helpId, errorId].filter(Boolean).join(" ") || undefined;
 
-  const isCheckable = type === 'checkbox' || type === 'switch'
+  const isCheckable = type === "checkbox" || type === "switch";
 
   const commonAttrs = {
     id,
@@ -104,13 +97,13 @@ export const Field = forwardRef<HTMLElement, FieldProps>(function Field(
     disabled,
     required,
     onChange,
-    'aria-describedby': describedBy,
-    'aria-invalid': error ? true : undefined,
-  } as const
+    "aria-describedby": describedBy,
+    "aria-invalid": error ? true : undefined,
+  } as const;
 
-  let control: ReactNode
+  let control: ReactNode;
 
-  if (type === 'textarea') {
+  if (type === "textarea") {
     control = (
       <textarea
         {...commonAttrs}
@@ -122,8 +115,8 @@ export const Field = forwardRef<HTMLElement, FieldProps>(function Field(
         rows={rows ?? 4}
         readOnly={readOnly}
       />
-    )
-  } else if (type === 'select') {
+    );
+  } else if (type === "select") {
     control = (
       <select
         {...commonAttrs}
@@ -143,19 +136,19 @@ export const Field = forwardRef<HTMLElement, FieldProps>(function Field(
           </option>
         ))}
       </select>
-    )
+    );
   } else if (isCheckable) {
     control = (
       <input
         {...commonAttrs}
         ref={ref as Ref<HTMLInputElement>}
         type="checkbox"
-        role={type === 'switch' ? 'switch' : undefined}
+        role={type === "switch" ? "switch" : undefined}
         className="notto-field__control notto-field__checkable"
         checked={checked}
         defaultChecked={defaultChecked}
       />
-    )
+    );
   } else {
     control = (
       <input
@@ -172,15 +165,15 @@ export const Field = forwardRef<HTMLElement, FieldProps>(function Field(
         max={max}
         step={step}
       />
-    )
+    );
   }
 
   return (
     <div
-      className={cn('notto-field', className)}
+      className={cn("notto-field", className)}
       data-type={type}
-      data-checkable={isCheckable ? 'true' : undefined}
-      data-invalid={error ? 'true' : undefined}
+      data-checkable={isCheckable ? "true" : undefined}
+      data-invalid={error ? "true" : undefined}
     >
       {isCheckable ? (
         <div className="notto-field__checkable-row">
@@ -189,7 +182,7 @@ export const Field = forwardRef<HTMLElement, FieldProps>(function Field(
             {label}
             {required ? (
               <span className="notto-field__required" aria-hidden="true">
-                {' *'}
+                {" *"}
               </span>
             ) : null}
           </label>
@@ -200,7 +193,7 @@ export const Field = forwardRef<HTMLElement, FieldProps>(function Field(
             {label}
             {required ? (
               <span className="notto-field__required" aria-hidden="true">
-                {' *'}
+                {" *"}
               </span>
             ) : null}
           </label>
@@ -218,5 +211,5 @@ export const Field = forwardRef<HTMLElement, FieldProps>(function Field(
         </span>
       ) : null}
     </div>
-  )
-})
+  );
+});

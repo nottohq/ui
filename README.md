@@ -11,16 +11,18 @@ npm install @nottohq/ui
 ## Use
 
 ```tsx
-import { Stack, Box, Text } from '@nottohq/ui'
-import '@nottohq/ui/styles.css'
+import { Stack, Box, Text } from "@nottohq/ui";
+import "@nottohq/ui/styles.css";
 
 export default function Hello() {
   return (
     <Stack gap={4} align="center">
       <Text variant="display">Hello</Text>
-      <Text variant="body" tone="muted">Welcome to Notto UI</Text>
+      <Text variant="body" tone="muted">
+        Welcome to Notto UI
+      </Text>
     </Stack>
-  )
+  );
 }
 ```
 
